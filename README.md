@@ -46,7 +46,7 @@ Each trip page has its own design language:
 
 ### Vercel (Recommended)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/travel-magazine)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/justinwu/travel-magazine)
 
 Or import this repo at [vercel.com/new](https://vercel.com/new) — select **Other** as framework.
 
