@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#93000a",
+                    "inverse-primary": "#006b56",
+                    "primary": "#48fdd2",
+                    "on-tertiary-fixed": "#002115",
+                    "error": "#ffb4ab",
+                    "tertiary-fixed": "#bcedd4",
+                    "on-error": "#690005",
+                    "on-primary": "#00382c",
+                    "background": "#111317",
+                    "surface-container-lowest": "#0c0e12",
+                    "primary-container": "#00e0b7",
+                    "surface-dim": "#111317",
+                    "secondary-container": "#3c4962",
+                    "surface-bright": "#37393e",
+                    "on-error-container": "#ffdad6",
+                    "secondary": "#b9c7e4",
+                    "on-secondary-container": "#abb9d6",
+                    "on-surface": "#e2e2e8",
+                    "on-primary-fixed-variant": "#005140",
+                    "tertiary": "#bcedd4",
+                    "surface": "#111317",
+                    "on-surface-variant": "#bacac3",
+                    "surface-container-low": "#1a1c20",
+                    "outline": "#84948e",
+                    "secondary-fixed": "#d6e3ff",
+                    "secondary-fixed-dim": "#b9c7e4",
+                    "on-secondary-fixed-variant": "#39475f",
+                    "surface-container-highest": "#333539",
+                    "surface-container": "#1e2024",
+                    "on-tertiary": "#053827",
+                    "inverse-on-surface": "#2f3035",
+                    "on-background": "#e2e2e8",
+                    "outline-variant": "#3b4a44",
+                    "on-primary-container": "#005e4b",
+                    "on-tertiary-fixed-variant": "#224f3d",
+                    "tertiary-container": "#a1d1b9",
+                    "primary-fixed-dim": "#00e0b7",
+                    "surface-tint": "#00e0b7",
+                    "on-secondary-fixed": "#0d1c32",
+                    "on-primary-fixed": "#002018",
+                    "on-tertiary-container": "#2e5b48",
+                    "surface-container-high": "#282a2e",
+                    "inverse-surface": "#e2e2e8",
+                    "surface-variant": "#333539",
+                    "tertiary-fixed-dim": "#a1d1b9",
+                    "primary-fixed": "#48fdd2",
+                    "on-secondary": "#233148"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #111317;
+            color: #e2e2e8;
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-card {
+            background: rgba(51, 53, 57, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .editorial-shadow {
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-[#111317]/60 backdrop-blur-xl flex justify-between items-center px-12 py-6 tonal-separation">
+<div class="text-2xl font-black tracking-[0.2em] text-[#e2e2e8] dark:text-[#e2e2e8]">VOYAGER</div>
+<div class="hidden md:flex items-center space-x-12">
+<a class="font-headline tracking-widest uppercase font-bold text-sm text-[#48fdd2] border-b-2 border-[#48fdd2] pb-1 hover:text-[#48fdd2] transition-colors duration-300" href="#">Narratives</a>
+<a class="font-headline tracking-widest uppercase font-bold text-sm text-[#e2e2e8]/70 hover:text-[#48fdd2] transition-colors duration-300" href="#">Editions</a>
+<a class="font-headline tracking-widest uppercase font-bold text-sm text-[#e2e2e8]/70 hover:text-[#48fdd2] transition-colors duration-300" href="#">Destinations</a>
+<a class="font-headline tracking-widest uppercase font-bold text-sm text-[#e2e2e8]/70 hover:text-[#48fdd2] transition-colors duration-300" href="#">Stays</a>
+</div>
+<div class="flex items-center space-x-6">
+<button class="material-symbols-outlined text-[#e2e2e8] scale-95 active:duration-150">menu</button>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-[#0e141a]">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-80" data-alt="Majestic mountain range at dawn with soft pink and blue hues in the sky, misty peaks, premium editorial travel photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLM0xX8sW70Uu8pA6BPHw9eSeouHTJpgpRl8Hl5H4QjFI2eEe99YW5Agu2JBIWdRQwn8oqb7vAFMzelF9N5p0-Bl8XHCVfF9YNiGMbxRKl4HJbKfNu8g8zkGjeX7qORyLdi-Sn853kEBoOKjzMdqitj6LoatUa4pqmyHoJ4QEEMBm6-RIKdN070MJ5NO0kyyRJ8eMIbxYwQlTEn8rBSPAmPYCeFrnqMlxjhzJ2VYgr1tJ0yYSziJEUwD_u8lJbMJ93cCefDiAors3w"/>
+<div class="absolute inset-0 bg-gradient-to-b from-[#111317]/60 via-transparent to-[#111317]"></div>
+<div class="absolute inset-0 bg-black/20"></div>
+</div>
+<div class="relative z-10 text-center space-y-6">
+<h1 class="text-6xl md:text-8xl font-headline font-extrabold tracking-tighter text-on-surface drop-shadow-2xl">我的旅行誌</h1>
+<p class="text-xl md:text-2xl font-body font-light text-on-surface-variant tracking-[0.2em] drop-shadow-lg">Every journey tells a story.</p>
+</div>
+<div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-2 opacity-80">
+<span class="text-[10px] tracking-[0.4em] uppercase font-headline">Explore Archives</span>
+<span class="material-symbols-outlined text-primary animate-bounce">expand_more</span>
+</div>
+</header>
+<!-- Timeline Content -->
+<main class="relative py-32 md:py-48 max-w-7xl mx-auto px-6">
+<!-- Center Vertical Line -->
+<div class="absolute left-1/2 top-0 bottom-0 w-[2px] bg-outline-variant opacity-15 -translate-x-1/2"></div>
+<!-- Timeline Entry: 2025 -->
+<div class="relative grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-32 items-center mb-48 md:mb-64">
+<!-- Left Side: Content Card -->
+<div class="order-2 md:order-1 relative">
+<div class="glass-card rounded-xl p-8 md:p-12 editorial-shadow border border-outline-variant/10 group hover:bg-surface-container-high transition-all duration-500">
+<div class="mb-6">
+<span class="text-primary-container font-headline text-sm font-bold tracking-widest uppercase">Norway &amp; Finland</span>
+</div>
+<h2 class="text-3xl md:text-4xl font-headline font-bold mb-6 leading-tight text-on-surface">挪威 &amp; 芬蘭 冬季自駕之旅</h2>
+<p class="text-on-surface-variant font-body leading-relaxed mb-8 opacity-80">
+                        Chasing the aurora across the Arctic Circle. A story of frozen fjords, reindeer paths, and the silence of the Nordic winter night.
+                    </p>
+<div class="flex items-center space-x-4">
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-8 py-3 rounded-full font-headline font-bold text-sm tracking-wide hover:scale-105 transition-transform">Read Narrative</button>
+</div>
+</div>
+<!-- Decorative Image Floating -->
+<div class="hidden lg:block absolute -top-12 -left-20 w-48 h-64 rounded-xl overflow-hidden shadow-2xl z-20 border border-outline-variant/20 rotate-[-4deg]">
+<img class="w-full h-full object-cover" data-alt="misty northern lights green glow over a snow covered pine forest in norway arctic landscape" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcS0_qQgaEFSOL5BwNCJtGhDKwWUCoYsf2mwnjAtW_xRd5jjnjbuedHiCbscxPkFhNQHXrwGiFCqob6RneqeXQwdUisHEKMRI8V-ITqA0yo1dtKb9MT3e3Zgj1YxL5qshh1JjntjXHYTMVzmsMm0rcsVBbo5i744YVY6XnOX89zrDAcbGQhSSlCSuLQUYIAxRQgngBbjJ14qEbxdy-vKsd_iMynY2LZC2o1Mz2OY3djvMcXdx8KnAsAWI3_fqz-fBJ2kZhf4qLqqzW"/>
+</div>
+</div>
+<!-- Right Side: Imagery and Timeline Marker -->
+<div class="order-1 md:order-2 relative h-96 md:h-[500px]">
+<!-- Timeline Dot -->
+<div class="absolute left-[-41px] md:left-[-176px] top-1/2 -translate-y-1/2 z-30">
+<div class="w-5 h-5 rounded-full bg-primary-container shadow-[0_0_20px_#48fdd2] ring-8 ring-background"></div>
+</div>
+<div class="w-full h-full rounded-xl overflow-hidden editorial-shadow group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="dramatic aerial view of a winding road through snowy mountains in lofoten islands norway" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW3RjoI94j3S4Osg37tUVntjkyi4qJfXm5e9ak_qbZXht9p4lMnZbBIlZn0OeANVasnepFdvbmvs7SQr9RNd6cBRlDBRLwg3L9Uki_sxXwc05-lm58LvH25RqzB6psmEtbuPS3szflXhxE6AoqQTTEdUERZJrm-v5tCVlDculjuL5TAC52OhS9lPjNDIN0aY1mnKfmEwIi1A3VN3l4lJpIRm_43RtiN-xYSKLXUxqF-cKz3fUnjs37Tz9x61_vKaFW40zHrpNfMSdL"/>
+</div>
+<div class="absolute top-8 left-8 bg-surface-container-lowest/80 backdrop-blur-md px-6 py-2 rounded-full border border-outline-variant/20">
+<span class="font-headline font-bold text-primary tracking-widest uppercase">2025.01</span>
+</div>
+</div>
+</div>
+<!-- Timeline Entry: 2026 -->
+<div class="relative grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-32 items-center">
+<!-- Left Side: Imagery and Timeline Marker -->
+<div class="order-1 relative h-96 md:h-[500px]">
+<!-- Timeline Dot -->
+<div class="absolute right-[-41px] md:right-[-176px] top-1/2 -translate-y-1/2 z-30">
+<div class="w-5 h-5 rounded-full bg-tertiary-container shadow-[0_0_20px_#a1d1b9] ring-8 ring-background"></div>
+</div>
+<div class="w-full h-full rounded-xl overflow-hidden editorial-shadow group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="scenic view of Lake Como Italy with luxury villas on the hillside and calm turquoise water" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJ2auoVJdezaE-O4tLie-nOooQOOUBTJbW-vrZA3ci6PahA1R90cH3uLArtJ-Cb3tWwSxkbvynxyQV8uQZKdXCyah9K-aRquZxDeJIigJOmR-Bs8PQY7Hit3MIs0yzY-vM6LhHL5CMYg1gUOKQQOgkYu_V8kJhVpZcxmKr4STTzEn9lSMt4ziMqT6G76zMCWM9IDxQ-zjhmcx6q_Oxsuu5pFmvvpqjwohSKLAFQfYqJzmvzmsLvAHin-hLt7t-me7ZO86ie5UnW3ui"/>
+</div>
+<div class="absolute top-8 right-8 bg-surface-container-lowest/80 backdrop-blur-md px-6 py-2 rounded-full border border-outline-variant/20">
+<span class="font-headline font-bold text-tertiary tracking-widest uppercase">2026.05</span>
+</div>
+</div>
+<!-- Right Side: Content Card -->
+<div class="order-2 relative">
+<div class="glass-card rounded-xl p-8 md:p-12 editorial-shadow border border-outline-variant/10 group hover:bg-surface-container-high transition-all duration-500">
+<div class="mb-6">
+<span class="text-tertiary-container font-headline text-sm font-bold tracking-widest uppercase">Switzerland &amp; Italy</span>
+</div>
+<h2 class="text-3xl md:text-4xl font-headline font-bold mb-6 leading-tight text-on-surface">瑞士 × 義大利 蜜月之旅</h2>
+<p class="text-on-surface-variant font-body leading-relaxed mb-8 opacity-80">
+                        From the soaring peaks of the Matterhorn to the romantic shores of Lake Como. A narrative of alpine luxury and mediterranean grace.
+                    </p>
+<div class="flex items-center space-x-4">
+<button class="bg-surface-variant/40 backdrop-blur-md border border-outline-variant/30 text-tertiary px-8 py-3 rounded-full font-headline font-bold text-sm tracking-wide hover:bg-surface-variant/60 transition-colors">Coming Soon</button>
+</div>
+</div>
+<!-- Decorative Image Floating -->
+<div class="hidden lg:block absolute -bottom-12 -right-16 w-56 h-48 rounded-xl overflow-hidden shadow-2xl z-20 border border-outline-variant/20 rotate-[3deg]">
+<img class="w-full h-full object-cover" data-alt="luxury hotel balcony overlooking the swiss alps with snow capped peaks in the morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBATvaLa1uIW3Iys9dpylNccW--NsKWKUvIECb0MLkBJIfrtiaoG6p8atef_Xw5sB40wU-kQy0f7Sag6ilTxgRs3-EKQLQ_YHcW2TxsqNv5MJ5uDrXhKGmmGv2DxSYdkgXTf6lVcdTEOQdeRmvzWVEec-15XukNlslg9aqoGd4kuyKjABwjk_6WASiPTWeClmypHPp8JSzPT9BYHAvuWxU5S3u7nSMVFla2osjtEWDTIhS6K59RBBebrZqPXCXKnYTqaGvf-R2BNjBm"/>
+</div>
+</div>
+</div>
+</main>
+<!-- Archive Section (Additional Context) -->
+<section class="bg-surface-container-low py-32">
+<div class="max-w-7xl mx-auto px-6">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+<div>
+<h3 class="text-4xl font-headline font-bold text-on-surface mb-4">Curated Archive</h3>
+<p class="text-on-surface-variant max-w-md">Explore themed collections of our past narratives, meticulously organized for the discerning explorer.</p>
+</div>
+<button class="text-primary font-headline text-sm font-bold tracking-widest uppercase border-b border-primary/30 pb-2 hover:border-primary transition-all">View All Collections</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Archive Item 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] rounded-xl overflow-hidden mb-6 relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="stark volcanic landscape of iceland with black sand and steam rising from geothermal pools" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqmcdisE_AkJEd2F3LmAVI1yZgD2UV-OAaSaf5o9X30CkADd518FliGCnRj5-AqSNiFV2PBHnsPbzLqL93DN7Vw2TY_jUGJMLHoigOOiiBeQ_RxlkIP0Khultb4i9zIs-szcKJnRkJctioTl8Mku62UEXUl5NfLB73OigXpod6DmPz4n12EIinIJN7zFqNhE448RafF06fpSeqKfENIZSH7EDldcxjpv7h-cQNGTrmZFQIdb4397dss2Z12Z7t1BSO8DGyMvo461_i"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="text-[10px] font-headline tracking-[0.3em] uppercase text-on-surface/60 mb-2 block">Edition 01</span>
+<h4 class="text-xl font-headline font-bold text-on-surface">Untamed North</h4>
+</div>
+</div>
+</div>
+<!-- Archive Item 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] rounded-xl overflow-hidden mb-6 relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="narrow sun-drenched cobblestone street in a traditional japanese village with wooden architecture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgGXVmA9-qq1p3VUeiaKrMF1nqTBTerZaHO-GpxIcWxky6jsuhiHKDTPRQ7Jqv8jd9ql2BQF3PHNfSNQNxkhv4_SE_cwMz4rs0JvBDcADCCYAFzAHKbY6wDS8qoTfZag3CI3ElM6kKkZuZYSfF0fQ3HeFpSigcpYZXVourp3NKgtURwFdASa4zqg_Z-jf9VcflixkfyK4pLSj3OdWcWzwRTIddusb-hXRyxLSQAgqUI4P5isabMkTaLKm9L186kTIA6YjpqMjmPk9l"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="text-[10px] font-headline tracking-[0.3em] uppercase text-on-surface/60 mb-2 block">Edition 02</span>
+<h4 class="text-xl font-headline font-bold text-on-surface">Silent Kyoto</h4>
+</div>
+</div>
+</div>
+<!-- Archive Item 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] rounded-xl overflow-hidden mb-6 relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="the golden gate bridge enveloped in thick morning fog with sunset light hitting the tops of the towers" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTG5T10_LL3lnIRKpUoTuS5A87yZxMEBqgSpatgFNVnA_0Gm_YCm94nQcJhyhpEzOMJ3pRSHl7cDfWPFyXIE6rQ9dPrbpK-m4I3YDwTztTS2KSxQt32B5orvWrAhax_6BZfLclp2l_UwwmFp0AgF3NBUvjI18p4_U067_lqZwN8ghftrJ_Pph3YTkuB_0TY_iEIHWPdJMHpqFh0EHAztruaPXqSJfN5lx-Xar2UiambrEN2FsntZX8TGxYzfKO7XO2UG9-pN0DGofB"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="text-[10px] font-headline tracking-[0.3em] uppercase text-on-surface/60 mb-2 block">Edition 03</span>
+<h4 class="text-xl font-headline font-bold text-on-surface">Pacific Drift</h4>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-[#111317] py-12 px-12 tonal-shift border-t border-[#3b4a44]/15">
+<div class="flex flex-col md:flex-row justify-between items-center w-full gap-8">
+<div class="flex space-x-8">
+<a class="font-headline text-[10px] tracking-widest uppercase text-[#e2e2e8]/40 hover:text-[#e2e2e8] transition-colors" href="#">Privacy</a>
+<a class="font-headline text-[10px] tracking-widest uppercase text-[#e2e2e8]/40 hover:text-[#e2e2e8] transition-colors" href="#">Terms</a>
+<a class="font-headline text-[10px] tracking-widest uppercase text-[#e2e2e8]/40 hover:text-[#e2e2e8] transition-colors" href="#">Contact</a>
+<a class="font-headline text-[10px] tracking-widest uppercase text-[#e2e2e8]/40 hover:text-[#e2e2e8] transition-colors" href="#">Archive</a>
+</div>
+<div class="font-headline text-[10px] tracking-widest uppercase text-[#e2e2e8]/40">
+                2024 VOYAGER. ALL RIGHTS RESERVED.
+            </div>
+<div class="flex space-x-6 opacity-40">
+<span class="material-symbols-outlined">public</span>
+<span class="material-symbols-outlined">share</span>
+</div>
+</div>
+</footer>
+</body></html>

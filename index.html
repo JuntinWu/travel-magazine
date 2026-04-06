@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-TW"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VOYAGER | 我的旅行誌</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "error-container": "#93000a",
+          "inverse-primary": "#006b56",
+          "primary": "#48fdd2",
+          "on-tertiary-fixed": "#002115",
+          "error": "#ffb4ab",
+          "tertiary-fixed": "#bcedd4",
+          "on-error": "#690005",
+          "on-primary": "#00382c",
+          "background": "#111317",
+          "surface-container-lowest": "#0c0e12",
+          "primary-container": "#00e0b7",
+          "surface-dim": "#111317",
+          "secondary-container": "#3c4962",
+          "surface-bright": "#37393e",
+          "on-error-container": "#ffdad6",
+          "secondary": "#b9c7e4",
+          "on-secondary-container": "#abb9d6",
+          "on-surface": "#e2e2e8",
+          "on-primary-fixed-variant": "#005140",
+          "tertiary": "#bcedd4",
+          "surface": "#111317",
+          "on-surface-variant": "#bacac3",
+          "surface-container-low": "#1a1c20",
+          "outline": "#84948e",
+          "secondary-fixed": "#d6e3ff",
+          "secondary-fixed-dim": "#b9c7e4",
+          "on-secondary-fixed-variant": "#39475f",
+          "surface-container-highest": "#333539",
+          "surface-container": "#1e2024",
+          "on-tertiary": "#053827",
+          "inverse-on-surface": "#2f3035",
+          "on-background": "#e2e2e8",
+          "outline-variant": "#3b4a44",
+          "on-primary-container": "#005e4b",
+          "on-tertiary-fixed-variant": "#224f3d",
+          "tertiary-container": "#a1d1b9",
+          "primary-fixed-dim": "#00e0b7",
+          "surface-tint": "#00e0b7",
+          "on-secondary-fixed": "#0d1c32",
+          "on-primary-fixed": "#002018",
+          "on-tertiary-container": "#2e5b48",
+          "surface-container-high": "#282a2e",
+          "inverse-surface": "#e2e2e8",
+          "surface-variant": "#333539",
+          "tertiary-fixed-dim": "#a1d1b9",
+          "primary-fixed": "#48fdd2",
+          "on-secondary": "#233148"
+        },
+        borderRadius: {
+          DEFAULT: "0.125rem",
+          lg: "0.25rem",
+          xl: "0.5rem",
+          full: "0.75rem"
+        },
+        fontFamily: {
+          headline: ["Plus Jakarta Sans"],
+          body: ["Inter"],
+          label: ["Inter"]
+        }
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  body {
+    background-color: #111317;
+    color: #e2e2e8;
+    font-family: 'Inter', sans-serif;
+  }
+  .glass-card {
+    background: rgba(51, 53, 57, 0.4);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+  .editorial-shadow {
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5);
+  }
+  html { scroll-behavior: smooth; }
+
+  /* Timeline responsive fixes */
+  @media (min-width: 768px) {
+    .timeline-track {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .timeline-dot-left {
+      right: -2.75rem;
+      left: auto;
+    }
+    .timeline-dot-right {
+      left: -2.75rem;
+      right: auto;
+    }
+  }
+</style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary selection:text-on-primary">
+
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-[#111317]/60 backdrop-blur-xl flex justify-between items-center px-8 md:px-12 py-5">
+  <a href="#" class="text-2xl font-black tracking-[0.2em] text-[#e2e2e8] font-headline">VOYAGER</a>
+  <div class="hidden md:flex items-center space-x-10">
+    <a class="font-headline tracking-widest uppercase font-bold text-xs text-[#e2e2e8]/70 hover:text-[#48fdd2] transition-colors duration-300" href="#journeys">Journeys</a>
+    <a class="font-headline tracking-widest uppercase font-bold text-xs text-[#e2e2e8]/70 hover:text-[#48fdd2] transition-colors duration-300" href="#about">About</a>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<header class="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-[#0e141a]">
+  <div class="absolute inset-0 z-0">
+    <img class="w-full h-full object-cover opacity-80" alt="Majestic mountain range at dawn" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLM0xX8sW70Uu8pA6BPHw9eSeouHTJpgpRl8Hl5H4QjFI2eEe99YW5Agu2JBIWdRQwn8oqb7vAFMzelF9N5p0-Bl8XHCVfF9YNiGMbxRKl4HJbKfNu8g8zkGjeX7qORyLdi-Sn853kEBoOKjzMdqitj6LoatUa4pqmyHoJ4QEEMBm6-RIKdN070MJ5NO0kyyRJ8eMIbxYwQlTEn8rBSPAmPYCeFrnqMlxjhzJ2VYgr1tJ0yYSziJEUwD_u8lJbMJ93cCefDiAors3w"/>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#111317]/60 via-transparent to-[#111317]"></div>
+    <div class="absolute inset-0 bg-black/20"></div>
+  </div>
+  <div class="relative z-10 text-center space-y-6">
+    <h1 class="text-5xl md:text-8xl font-headline font-extrabold tracking-tighter text-on-surface drop-shadow-2xl">我的旅行誌</h1>
+    <p class="text-lg md:text-2xl font-body font-light text-on-surface-variant tracking-[0.2em] drop-shadow-lg">Every journey tells a story.</p>
+  </div>
+  <a href="#journeys" class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-2 opacity-80 hover:opacity-100 transition-opacity">
+    <span class="text-[10px] tracking-[0.4em] uppercase font-headline">Explore Archives</span>
+    <span class="material-symbols-outlined text-primary animate-bounce">expand_more</span>
+  </a>
+</header>
+
+<!-- Timeline Content -->
+<main id="journeys" class="relative py-24 md:py-48 max-w-7xl mx-auto px-6">
+
+  <!-- Center Vertical Line (desktop only) -->
+  <div class="hidden md:block absolute timeline-track left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] bg-outline-variant/15"></div>
+
+  <!-- Timeline Entry: 2025 Norway & Finland -->
+  <div class="relative grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-24 items-center mb-32 md:mb-64">
+
+    <!-- Left: Content Card -->
+    <div class="order-2 md:order-1 relative">
+      <a href="./2025-Norway_Finland/index.html" class="block">
+        <div class="glass-card rounded-xl p-8 md:p-12 editorial-shadow border border-outline-variant/10 group hover:bg-surface-container-high/80 transition-all duration-500 hover:scale-[1.02]">
+          <div class="mb-4">
+            <span class="text-primary-container font-headline text-xs font-bold tracking-widest uppercase">Norway & Finland</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-headline font-bold mb-4 leading-tight text-on-surface">挪威 & 芬蘭<br/>冬季自駕之旅</h2>
+          <p class="text-on-surface-variant font-body leading-relaxed mb-8 opacity-80">
+            Chasing the aurora across the Arctic Circle. A story of frozen fjords, reindeer paths, and the silence of the Nordic winter night.
+          </p>
+          <div class="flex items-center space-x-2 text-primary font-headline font-bold text-sm tracking-wide group-hover:translate-x-2 transition-transform duration-300">
+            <span>Read Narrative</span>
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Right: Image + Timeline Dot -->
+    <div class="order-1 md:order-2 relative h-72 md:h-[480px]">
+      <!-- Timeline Dot -->
+      <div class="hidden md:block absolute timeline-dot-right left-[-2.75rem] top-1/2 -translate-y-1/2 z-30">
+        <div class="w-4 h-4 rounded-full bg-primary-container shadow-[0_0_20px_4px_rgba(72,253,210,0.4)] ring-[6px] ring-background"></div>
+      </div>
+      <a href="./2025-Norway_Finland/index.html" class="block w-full h-full rounded-xl overflow-hidden editorial-shadow group">
+        <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Dramatic aerial view of a winding road through snowy mountains in Lofoten Islands Norway" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW3RjoI94j3S4Osg37tUVntjkyi4qJfXm5e9ak_qbZXht9p4lMnZbBIlZn0OeANVasnepFdvbmvs7SQr9RNd6cBRlDBRLwg3L9Uki_sxXwc05-lm58LvH25RqzB6psmEtbuPS3szflXhxE6AoqQTTEdUERZJrm-v5tCVlDculjuL5TAC52OhS9lPjNDIN0aY1mnKfmEwIi1A3VN3l4lJpIRm_43RtiN-xYSKLXUxqF-cKz3fUnjs37Tz9x61_vKaFW40zHrpNfMSdL"/>
+      </a>
+      <div class="absolute top-6 left-6 bg-surface-container-lowest/80 backdrop-blur-md px-5 py-1.5 rounded-full border border-outline-variant/20">
+        <span class="font-headline font-bold text-sm text-primary tracking-widest uppercase">2025.01</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline Entry: 2026 Switzerland & Italy -->
+  <div class="relative grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-24 items-center">
+
+    <!-- Left: Image + Timeline Dot -->
+    <div class="order-1 relative h-72 md:h-[480px]">
+      <!-- Timeline Dot -->
+      <div class="hidden md:block absolute timeline-dot-left right-[-2.75rem] top-1/2 -translate-y-1/2 z-30">
+        <div class="w-4 h-4 rounded-full bg-tertiary-container shadow-[0_0_20px_4px_rgba(161,209,185,0.4)] ring-[6px] ring-background"></div>
+      </div>
+      <a href="./2026-Switzerland-Italy/index.html" class="block w-full h-full rounded-xl overflow-hidden editorial-shadow group">
+        <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Scenic view of Lake Como Italy with luxury villas on the hillside" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJ2auoVJdezaE-O4tLie-nOooQOOUBTJbW-vrZA3ci6PahA1R90cH3uLArtJ-Cb3tWwSxkbvynxyQV8uQZKdXCyah9K-aRquZxDeJIigJOmR-Bs8PQY7Hit3MIs0yzY-vM6LhHL5CMYg1gUOKQQOgkYu_V8kJhVpZcxmKr4STTzEn9lSMt4ziMqT6G76zMCWM9IDxQ-zjhmcx6q_Oxsuu5pFmvvpqjwohSKLAFQfYqJzmvzmsLvAHin-hLt7t-me7ZO86ie5UnW3ui"/>
+      </a>
+      <div class="absolute top-6 right-6 bg-surface-container-lowest/80 backdrop-blur-md px-5 py-1.5 rounded-full border border-outline-variant/20">
+        <span class="font-headline font-bold text-sm text-tertiary tracking-widest uppercase">2026.05</span>
+      </div>
+    </div>
+
+    <!-- Right: Content Card -->
+    <div class="order-2 relative">
+      <a href="./2026-Switzerland-Italy/index.html" class="block">
+        <div class="glass-card rounded-xl p-8 md:p-12 editorial-shadow border border-outline-variant/10 group hover:bg-surface-container-high/80 transition-all duration-500 hover:scale-[1.02]">
+          <div class="mb-4">
+            <span class="text-tertiary-container font-headline text-xs font-bold tracking-widest uppercase">Switzerland & Italy</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-headline font-bold mb-4 leading-tight text-on-surface">瑞士 × 義大利<br/>蜜月之旅</h2>
+          <p class="text-on-surface-variant font-body leading-relaxed mb-8 opacity-80">
+            From the soaring peaks of the Matterhorn to the romantic shores of Lake Como. A narrative of alpine luxury and mediterranean grace.
+          </p>
+          <div class="flex items-center space-x-2 text-tertiary font-headline font-bold text-sm tracking-wide group-hover:translate-x-2 transition-transform duration-300">
+            <span>Read Narrative</span>
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</main>
+
+<!-- About Section -->
+<section id="about" class="bg-surface-container-low py-28 md:py-36">
+  <div class="max-w-4xl mx-auto px-6 flex flex-col items-center text-center">
+
+    <!-- Avatar -->
+    <div class="relative w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden mb-10 ring-2 ring-outline-variant/20 editorial-shadow">
+      <img class="w-full h-full object-cover" alt="Couple silhouette looking at scenic landscape together" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqmcdisE_AkJEd2F3LmAVI1yZgD2UV-OAaSaf5o9X30CkADd518FliGCnRj5-AqSNiFV2PBHnsPbzLqL93DN7Vw2TY_jUGJMLHoigOOiiBeQ_RxlkIP0Khultb4i9zIs-szcKJnRkJctioTl8Mku62UEXUl5NfLB73OigXpod6DmPz4n12EIinIJN7zFqNhE448RafF06fpSeqKfENIZSH7EDldcxjpv7h-cQNGTrmZFQIdb4397dss2Z12Z7t1BSO8DGyMvo461_i"/>
+      <!-- Gradient overlay to keep it moody -->
+      <div class="absolute inset-0 bg-gradient-to-t from-[#111317]/30 to-transparent"></div>
+    </div>
+
+    <!-- Title -->
+    <h3 class="text-3xl md:text-4xl font-headline font-bold text-on-surface mb-6">About Us</h3>
+
+    <!-- Description -->
+    <p class="text-on-surface-variant font-body text-base md:text-lg leading-relaxed max-w-2xl mb-4">
+      我們是一對樂活夫妻，熱愛旅行、攝影與美食。<br class="hidden md:block"/>
+      用鏡頭記錄每一段旅程，用味蕾感受每一座城市。
+    </p>
+    <p class="text-on-surface-variant/60 font-body text-sm md:text-base leading-relaxed max-w-xl">
+      目前正在前往 <span class="text-primary font-semibold">F.I.R.E.</span> 的路上 —— 期待有一天能自由地走遍世界每個角落。
+    </p>
+
+    <!-- Decorative Tags -->
+    <div class="flex flex-wrap justify-center gap-3 mt-10">
+      <span class="glass-card px-5 py-2 rounded-full text-xs font-headline tracking-widest uppercase text-on-surface/70 border border-outline-variant/15">
+        <span class="material-symbols-outlined text-sm mr-1 text-primary">photo_camera</span> Photography
+      </span>
+      <span class="glass-card px-5 py-2 rounded-full text-xs font-headline tracking-widest uppercase text-on-surface/70 border border-outline-variant/15">
+        <span class="material-symbols-outlined text-sm mr-1 text-primary">restaurant</span> Foodie
+      </span>
+      <span class="glass-card px-5 py-2 rounded-full text-xs font-headline tracking-widest uppercase text-on-surface/70 border border-outline-variant/15">
+        <span class="material-symbols-outlined text-sm mr-1 text-primary">flight</span> Travel
+      </span>
+      <span class="glass-card px-5 py-2 rounded-full text-xs font-headline tracking-widest uppercase text-on-surface/70 border border-outline-variant/15">
+        <span class="material-symbols-outlined text-sm mr-1 text-primary">local_fire_department</span> F.I.R.E.
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-[#111317] py-10 px-8 md:px-12 border-t border-[#3b4a44]/15">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full gap-6">
+    <a href="#" class="font-headline text-lg font-black tracking-[0.2em] text-[#e2e2e8]/40 hover:text-[#e2e2e8] transition-colors">VOYAGER</a>
+    <div class="font-headline text-[10px] tracking-widest uppercase text-[#e2e2e8]/40">
+      &copy; 2025 VOYAGER. ALL RIGHTS RESERVED.
+    </div>
+  </div>
+</footer>
+
+</body></html>

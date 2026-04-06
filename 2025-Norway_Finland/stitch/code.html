@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>2025 Norway &amp; Finland Winter Road Trip</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Inter:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#233148",
+                    "surface-container-low": "#161c22",
+                    "on-surface-variant": "#c5c6cd",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-secondary-fixed-variant": "#454747",
+                    "primary": "#b9c7e4",
+                    "tertiary-fixed": "#15ffd1",
+                    "surface-container-high": "#242b31",
+                    "inverse-surface": "#dde3eb",
+                    "surface-container-highest": "#2f353c",
+                    "on-background": "#dde3eb",
+                    "on-secondary": "#2f3131",
+                    "secondary": "#c6c6c7",
+                    "on-tertiary-container": "#009378",
+                    "surface-tint": "#b9c7e4",
+                    "on-tertiary": "#00382c",
+                    "on-primary-fixed-variant": "#39475f",
+                    "on-surface": "#dde3eb",
+                    "tertiary-fixed-dim": "#00e0b7",
+                    "outline-variant": "#44474d",
+                    "error-container": "#93000a",
+                    "primary-fixed": "#d6e3ff",
+                    "outline": "#8f9097",
+                    "on-secondary-container": "#b4b5b5",
+                    "surface-dim": "#0e141a",
+                    "secondary-container": "#454747",
+                    "surface-container": "#1a2026",
+                    "surface": "#0e141a",
+                    "on-error": "#690005",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-tertiary-fixed": "#002019",
+                    "primary-container": "#0a192f",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed-dim": "#b9c7e4",
+                    "secondary-fixed": "#e2e2e2",
+                    "tertiary-container": "#001e16",
+                    "background": "#0e141a",
+                    "tertiary": "#00e0b7",
+                    "surface-variant": "#2f353c",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed-variant": "#005141",
+                    "on-primary-fixed": "#0d1c32",
+                    "surface-bright": "#333a40",
+                    "on-primary-container": "#74829d",
+                    "surface-container-lowest": "#080f14",
+                    "inverse-primary": "#515f78",
+                    "inverse-on-surface": "#2b3137"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { background: rgba(10, 25, 47, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .tonal-carving { background: linear-gradient(135deg, #0A192F 0%, #0E141A 100%); }
+        #itinerary-map { height: 600px; width: 100%; border-radius: 0.5rem; }
+        .aurora-glow { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; background: radial-gradient(circle at 50% 50%, rgba(0, 224, 183, 0.05) 0%, transparent 70%); pointer-events: none; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0e141a; }
+        ::-webkit-scrollbar-thumb { background: #2f353c; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-tertiary selection:text-on-tertiary">
+<!-- Top Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 max-w-full bg-slate-900/40 backdrop-blur-xl shadow-[0_0_40px_rgba(214,227,255,0.05)] font-['Plus_Jakarta_Sans'] tracking-tight">
+<div class="text-xl font-bold tracking-tighter text-slate-100 uppercase">Arctic Vistas</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-emerald-400 font-bold border-b-2 border-emerald-400 pb-1" href="#hero">Home</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors" href="#itinerary">Itinerary</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors" href="#info">Information</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors" href="#expenses">Expenses</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-tertiary font-bold cursor-pointer hover:bg-slate-800/50 p-2 rounded-lg transition-all active:scale-95 duration-200">ZH/EN</span>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-slate-100" data-icon="dark_mode">dark_mode</span>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 tonal-carving overflow-hidden" id="hero">
+<div class="aurora-glow"></div>
+<div class="z-10 max-w-5xl">
+<h1 class="text-5xl md:text-8xl font-extrabold tracking-tighter text-on-background mb-6 leading-tight">
+                2025 挪威 &amp; 芬蘭<br/>
+<span class="text-tertiary">冬季自駕之旅</span>
+</h1>
+<p class="text-lg md:text-2xl text-on-surface-variant font-light tracking-[0.2em] uppercase mb-12">
+                Bergen → Fjords → Oslo → Lofoten → Tromsø → Rovaniemi → Helsinki
+            </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left glass-panel p-8 rounded-xl border border-outline-variant/10">
+<div>
+<span class="text-tertiary text-xs tracking-widest uppercase font-bold block mb-2">Expedition Dates</span>
+<p class="text-2xl font-headline font-bold text-on-surface">Feb 28 — Mar 15, 2025</p>
+<p class="text-on-surface-variant">16 Magical Days in the Arctic Circle</p>
+</div>
+<div>
+<span class="text-tertiary text-xs tracking-widest uppercase font-bold block mb-2">The Crew</span>
+<p class="text-2xl font-headline font-bold text-on-surface">Yost, Mimi, Justin, Yoyo</p>
+<p class="text-on-surface-variant">4 Explorers, 1 Epic Journey</p>
+</div>
+</div>
+</div>
+<div class="absolute bottom-10 animate-bounce">
+<span class="material-symbols-outlined text-slate-500" data-icon="expand_more">expand_more</span>
+</div>
+<div class="absolute inset-0 z-0 opacity-40">
+<div class="w-full h-full bg-cover bg-center" data-alt="dramatic wide landscape of snowy mountains and a winding road under a glowing emerald green aurora borealis sky at night" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDIeavF77QNgzu_oip4tlCzxKhdi_9xLT0ivArFg5nx4rDoZ1YujFNZVWQQlgaymZ2aqfhtxhD-uf1f9tvY8AKAgptdM9jwkirquIdcQNSIc-eWsaKLMRgMEWOgz5XyjHMrVlizbDs7HQPOFpTslkuwQF8cPL7WNN8xY_WgNtdS5BmVGisVIhksgGr9rbflOpkr7DyN4QcYbsOgRkQoA6vFnCZ38ydHRN6DLV7pkjRoL3ssd1v0Jv6VfLykYASjKEdWt4eGIEP0HwJU')"></div>
+</div>
+</header>
+<!-- Interactive Map Section -->
+<section class="py-24 px-6 md:px-24 bg-surface-dim relative" id="map-section">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+<div class="max-w-2xl">
+<h2 class="text-4xl md:text-6xl font-extrabold tracking-tighter text-on-surface mb-6">The Frozen Path</h2>
+<p class="text-body text-on-surface-variant leading-relaxed">Our route carves through the heart of Scandinavia, from the fjord-indented coast of Norway to the frozen forests of Finnish Lapland.</p>
+</div>
+<div class="text-right">
+<div class="flex items-center gap-2 text-tertiary font-bold mb-2">
+<span class="material-symbols-outlined" data-icon="route">route</span>
+<span>2,400+ KM</span>
+</div>
+<p class="text-label text-on-surface-variant text-sm">TOTAL DISTANCE</p>
+</div>
+</div>
+<div class="shadow-2xl border border-outline-variant/20 z-0" data-location="Norway" id="itinerary-map" style=""></div>
+</div>
+</section>
+<!-- Itinerary Section -->
+<section class="py-24 px-6 md:px-12 bg-surface" id="itinerary">
+<div class="max-w-screen-2xl mx-auto flex flex-col lg:flex-row gap-16">
+<!-- Timeline Sidebar -->
+<div class="hidden lg:block w-1/4 sticky top-32 h-fit">
+<div class="space-y-4">
+<h3 class="text-sm font-bold tracking-widest text-tertiary uppercase mb-8">Daily Roadmap</h3>
+<div class="flex flex-col gap-3">
+<a class="text-sm text-on-surface-variant hover:text-tertiary transition-all" href="#day-1">Day 01 | Departure</a>
+<a class="text-sm text-on-surface-variant hover:text-tertiary transition-all" href="#day-6">Day 06 | Arctic Entry</a>
+<a class="text-sm text-on-surface-variant hover:text-tertiary transition-all" href="#day-13">Day 13 | Lapland</a>
+</div>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 space-y-32">
+<!-- Day 1 Card -->
+<div class="group grid md:grid-cols-2 gap-12 items-center" id="day-1">
+<div class="aspect-video rounded-xl overflow-hidden glass-panel border border-outline-variant/10">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="night time view of a modern scandinavian airport interior with sleek glass and architectural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXT4utIblBZIEYdNND_zt4q47Ixalo--vVOpuensInYtMm_hYFi0cjhD_g_zocJ1VVhD_ff91VD8XJoHcLfeAbTTrvT9eLgKkCVT56ypbFn8FHp7lhJYcVHThBHgperC3C6USYXaLTjteNw8herIgL5UaF9M32ka7yPh6cRLYeG1YhgyEjAZbz3a8kLmxfXcGBOzHr_22A7bgeULqNbCCFSZhjC6EqvCJIiEP9Y5Snohjss00vdLH8UggEp-N81KevD9Znts1MD8kQ"/>
+</div>
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<span class="text-7xl font-extrabold text-outline-variant/20 font-headline tracking-tighter">01</span>
+<div>
+<p class="text-tertiary font-bold">Feb 28, FRI</p>
+<h4 class="text-3xl font-bold">Launch: TPE to Bergen</h4>
+</div>
+</div>
+<p class="text-on-surface-variant leading-relaxed">International departure from TPE (7:55 AM). Arrival in Bergen by late night (23:30 PM).</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-4 rounded-lg">
+<span class="material-symbols-outlined text-tertiary mb-2" data-icon="flight">flight</span>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Transport</p>
+<p class="text-sm">Long-haul Flights</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<span class="material-symbols-outlined text-tertiary mb-2" data-icon="bed">bed</span>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Sleep</p>
+<p class="text-sm">Clarion Hotel Bergen Airport</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Day 3 Card - Detailed Bento Layout -->
+<div class="group glass-panel rounded-2xl p-8 border border-outline-variant/10" id="day-3">
+<div class="flex flex-col md:flex-row gap-8 mb-8">
+<div class="md:w-1/3">
+<h4 class="text-tertiary text-sm font-bold uppercase tracking-widest mb-2">Day 03 — Mar 02</h4>
+<h2 class="text-4xl font-extrabold leading-tight">Norway in a<br/>Nutshell</h2>
+</div>
+<div class="md:w-2/3 grid grid-cols-3 gap-4">
+<div class="glass-panel p-4 rounded-lg flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-tertiary" data-icon="train">train</span>
+<span class="text-[10px] mt-2 font-bold opacity-60">TRAIN</span>
+</div>
+<div class="glass-panel p-4 rounded-lg flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-tertiary" data-icon="directions_boat">directions_boat</span>
+<span class="text-[10px] mt-2 font-bold opacity-60">FERRY</span>
+</div>
+<div class="glass-panel p-4 rounded-lg flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-tertiary" data-icon="directions_bus">directions_bus</span>
+<span class="text-[10px] mt-2 font-bold opacity-60">BUS</span>
+</div>
+</div>
+</div>
+<div class="grid md:grid-cols-3 gap-8">
+<div class="col-span-2">
+<h5 class="text-on-surface font-bold mb-4 flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-tertiary rounded-full"></span>
+                                The Expedition Flow
+                            </h5>
+<ul class="space-y-3 text-on-surface-variant text-sm">
+<li class="flex gap-3"><span class="text-tertiary">08:59</span> Train to Myrdal, Flåm Railway ascent</li>
+<li class="flex gap-3"><span class="text-tertiary">15:00</span> Nærøyfjord Cruise (UNESCO Heritage)</li>
+<li class="flex gap-3"><span class="text-tertiary">17:00</span> Stegastein Viewpoint shuttle</li>
+</ul>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-container p-4 rounded-lg">
+<p class="text-[10px] text-tertiary font-bold mb-1 uppercase tracking-tighter">Shopping</p>
+<p class="text-xs font-semibold">Flåm Coop Supermarket</p>
+</div>
+<div class="bg-surface-container p-4 rounded-lg">
+<p class="text-[10px] text-tertiary font-bold mb-1 uppercase tracking-tighter">Stay</p>
+<p class="text-xs font-semibold">Flåm / Lunden Area</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Day 6 Card - Big Move -->
+<div class="relative group" id="day-6">
+<div class="absolute -left-4 top-0 h-full w-1 bg-tertiary/20"></div>
+<div class="pl-8 space-y-8">
+<div class="flex justify-between items-end">
+<div>
+<span class="text-tertiary font-bold text-xs">Day 06 | Mar 05</span>
+<h3 class="text-5xl font-black italic tracking-tighter uppercase">The Lofoten Gate</h3>
+</div>
+<span class="material-symbols-outlined text-tertiary text-4xl" data-icon="car_rental">car_rental</span>
+</div>
+<div class="grid md:grid-cols-2 gap-12">
+<div class="space-y-6">
+<p class="text-on-surface-variant leading-relaxed">Transition from city to wild. Flight from Oslo to Bodø, picking up the 4WD rental, and boarding the midnight ferry to Moskenes.</p>
+<div class="space-y-2">
+<div class="flex justify-between border-b border-outline-variant/20 py-2">
+<span class="text-sm opacity-60">Morning</span>
+<span class="text-sm font-semibold">Oslo Flight to Bodø</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/20 py-2">
+<span class="text-sm opacity-60">Noon</span>
+<span class="text-sm font-semibold">Bodø Car Rental Depot</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/20 py-2">
+<span class="text-sm opacity-60">Night</span>
+<span class="text-sm font-semibold">Moskenes Ferry</span>
+</div>
+</div>
+</div>
+<div class="rounded-xl overflow-hidden h-64 border border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="panoramic drone shot of lofoten islands in winter with red traditional cabins and steep snow capped mountains reflecting in calm blue water" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFk2ElDYwy93WWdnw9cYxhJszsddo6Ol6FlhCTWoE7Rj5pbVbOPgxMknFzjlILs128UXgzm5WuPjGedt2kxducabstdUy72ssknz_b0xDPBkLYXMYqY7HvP-yNJ4f0bMv0bPuHmofK36Qp5ZNFEIT5LRqPk5LJ__hpll0B33mq5gRsMGpAo1jAPNtWjyqek9XLMAui5xkAkBQWUKileCMPN4CapjU-6vprTWaOGgMy6yi3xRD4nV8RsW3MrTju4JYtQb4fXHB6Oahl"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Day 13 Card - Lapland -->
+<div class="p-8 bg-surface-container-low rounded-2xl border-l-4 border-tertiary" id="day-13">
+<div class="flex flex-col md:flex-row justify-between items-start mb-8 gap-4">
+<div>
+<h4 class="text-3xl font-bold mb-2">Santa Claus Village</h4>
+<p class="text-on-surface-variant">Crossing the Border into Finland</p>
+</div>
+<div class="bg-tertiary/10 px-4 py-2 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-sm" data-icon="ac_unit">ac_unit</span>
+<span class="text-xs font-bold text-tertiary">LAPLAND SECTOR</span>
+</div>
+</div>
+<div class="grid md:grid-cols-3 gap-6">
+<div class="space-y-2">
+<p class="text-[10px] uppercase font-bold text-tertiary">Activity</p>
+<p class="text-sm">Arctic Circle Crossing Ceremony</p>
+</div>
+<div class="space-y-2">
+<p class="text-[10px] uppercase font-bold text-tertiary">Stay</p>
+<p class="text-sm font-bold">Nordic Quality Apartments</p>
+</div>
+<div class="space-y-2">
+<p class="text-[10px] uppercase font-bold text-tertiary">Route</p>
+<p class="text-sm">Tromsø to Rovaniemi Flight</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Useful Info & Cost Section -->
+<section class="py-24 px-6 md:px-24 bg-surface-container-lowest" id="info">
+<div class="max-w-7xl mx-auto">
+<h2 class="text-5xl font-extrabold tracking-tighter mb-16 text-center">Survivor's Manual</h2>
+<div class="grid md:grid-cols-3 gap-8">
+<!-- Shopping Guide -->
+<div class="glass-panel p-8 rounded-xl border border-outline-variant/10">
+<div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-tertiary" data-icon="shopping_cart">shopping_cart</span>
+</div>
+<h3 class="text-xl font-bold mb-4">Supermarket Guide</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-surface-container rounded-lg">
+<span class="font-bold">REMA 1000 / KIWI</span>
+<span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded">Budget Friendly</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container rounded-lg">
+<span class="font-bold">MENY</span>
+<span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Premium Selection</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-highest opacity-50">
+<span class="font-bold">Joker / Bunnpris</span>
+<span class="text-[10px] bg-error/20 text-error px-2 py-1 rounded">High Price</span>
+</div>
+</div>
+</div>
+<!-- Gear Guide -->
+<div class="glass-panel p-8 rounded-xl border border-outline-variant/10">
+<div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-tertiary" data-icon="luggage">luggage</span>
+</div>
+<h3 class="text-xl font-bold mb-4">Packing Checklist</h3>
+<ul class="space-y-3 text-sm text-on-surface-variant">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span> 28" Robust Suitcase x 4</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span> Cooking Gear &amp; Seasoning</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span> Thermal Wear ( merino wool )</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span> Waterproof Snow Boots</li>
+</ul>
+</div>
+<!-- Cost Chart -->
+<div class="glass-panel p-8 rounded-xl border border-tertiary/20" id="expenses">
+<div class="w-12 h-12 bg-tertiary rounded-lg flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(0,224,183,0.3)]">
+<span class="material-symbols-outlined text-on-tertiary" data-icon="payments">payments</span>
+</div>
+<h3 class="text-xl font-bold mb-1">Total Expenditure</h3>
+<p class="text-4xl font-headline font-extrabold text-tertiary mb-6">NT$ 122,361 <span class="text-sm font-normal opacity-60">/ pax</span></p>
+<div class="space-y-3">
+<div class="w-full bg-surface-container-high rounded-full h-2 overflow-hidden">
+<div class="bg-tertiary h-full w-[45%]"></div>
+</div>
+<div class="flex justify-between text-xs opacity-60">
+<span>Flights &amp; Trains</span>
+<span>45%</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-full w-[30%]"></div>
+</div>
+<div class="flex justify-between text-xs opacity-60">
+<span>Accommodations</span>
+<span>30%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Shell -->
+<footer class="w-full py-12 px-8 bg-slate-950 border-t border-slate-800/30 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="font-['Inter'] text-sm tracking-wide leading-relaxed text-slate-500">
+            © 2025 Arctic Vistas. Made with <span class="text-tertiary">❄️</span> from Taiwan to the Arctic.
+        </div>
+<div class="flex gap-8">
+<a class="text-slate-500 hover:text-emerald-400 transition-colors opacity-80 hover:opacity-100" href="#">Privacy</a>
+<a class="text-slate-500 hover:text-emerald-400 transition-colors opacity-80 hover:opacity-100" href="#">Terms</a>
+<a class="text-slate-500 hover:text-emerald-400 transition-colors opacity-80 hover:opacity-100" href="#">Contact</a>
+</div>
+</footer>
+<script>
+        // Initialize Map
+        const map = L.map('itinerary-map').setView([65.0, 15.0], 4);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors © CARTO'
+        }).addTo(map);
+
+        const markers = [
+            { name: "Bergen", coords: [60.3913, 5.3221] },
+            { name: "Flåm", coords: [60.8608, 7.1118] },
+            { name: "Oslo", coords: [59.9139, 10.7522] },
+            { name: "Bodø", coords: [67.2804, 14.4049] },
+            { name: "Reine", coords: [67.9334, 13.0891] },
+            { name: "Tromsø", coords: [69.6492, 18.9553] },
+            { name: "Rovaniemi", coords: [66.5039, 25.7282] },
+            { name: "Helsinki", coords: [60.1699, 24.9384] }
+        ];
+
+        const lineCoords = markers.map(m => m.coords);
+        
+        markers.forEach(m => {
+            L.circleMarker(m.coords, {
+                radius: 6,
+                fillColor: "#00E0B7",
+                color: "#00382C",
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 1
+            }).addTo(map).bindPopup(m.name);
+        });
+
+        L.polyline(lineCoords, {
+            color: '#00E0B7',
+            weight: 2,
+            opacity: 0.5,
+            dashArray: '10, 10'
+        }).addTo(map);
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ALPINIST | 2026 Honeymoon — Switzerland × Italy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "surface": "#121416",
+        "surface-dim": "#121416",
+        "surface-container-lowest": "#0c0e10",
+        "surface-container-low": "#1a1c1e",
+        "surface-container": "#1e2022",
+        "surface-container-high": "#282a2c",
+        "surface-container-highest": "#333537",
+        "primary": "#a1d1b9",
+        "primary-container": "#2d5a47",
+        "on-primary-fixed": "#002115",
+        "secondary": "#9ecfd1",
+        "secondary-container": "#1a4e50",
+        "on-surface": "#e2e2e5",
+        "on-surface-variant": "#c0c8c2",
+        "outline": "#8a938d",
+        "outline-variant": "#414944",
+      },
+      fontFamily: {
+        "headline": ["Plus Jakarta Sans", "sans-serif"],
+        "body": ["Manrope", "sans-serif"],
+      }
+    }
+  }
+}
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  ::selection { background: #a1d1b9; color: #121416; }
+  body { overflow-x: hidden; }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  }
+  @keyframes breathe { 0%,100%{opacity:.35} 50%{opacity:.7} }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(48px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { opacity: 0; transform: translateY(48px); transition: all 0.9s cubic-bezier(0.16,1,0.3,1); }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .img-hover:hover img { transform: scale(1.06); }
+  .nav-link { position: relative; }
+  .nav-link::after {
+    content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px;
+    background: #a1d1b9; transition: width 0.3s;
+  }
+  .nav-link:hover::after { width: 100%; }
+
+  /* Leaflet tooltip */
+  .map-tooltip {
+    background: rgba(30,32,34,0.92) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(161,209,185,0.2) !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+    color: #e2e2e5 !important;
+  }
+  .map-tooltip::before { border-top-color: rgba(30,32,34,0.92) !important; }
+  .leaflet-control-zoom a {
+    background: rgba(30,32,34,0.85) !important;
+    color: #a1d1b9 !important;
+    border-color: rgba(65,73,68,0.4) !important;
+  }
+  .leaflet-control-zoom a:hover { background: rgba(45,90,71,0.6) !important; }
+  .leaflet-control-attribution { background: rgba(18,20,22,0.7) !important; color: rgba(255,255,255,0.3) !important; font-size: 9px !important; }
+  .leaflet-control-attribution a { color: rgba(161,209,185,0.5) !important; }
+
+  /* Detailed itinerary accordion */
+  .day-detail { max-height: 0; overflow: hidden; transition: max-height 0.5s ease, opacity 0.4s ease; opacity: 0; }
+  .day-detail.open { max-height: 600px; opacity: 1; }
+</style>
+</head>
+
+<body class="bg-surface text-on-surface font-body">
+
+<!-- ═══════ NAV ═══════ -->
+<nav id="navbar" class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-4 md:py-6 transition-all duration-400">
+  <a href="../index.html" class="text-xl md:text-2xl font-headline font-black tracking-[0.2em] text-emerald-50 uppercase hover:text-primary transition-colors">VOYAGER</a>
+  <div class="hidden md:flex gap-8 items-center">
+    <a class="text-sm text-emerald-50/60 nav-link hover:text-emerald-200 transition-colors" href="../index.html">← 首頁</a>
+    <a class="text-sm text-primary font-bold border-b border-primary pb-1" href="#itinerary">Itinerary</a>
+    <a class="text-sm text-emerald-50/60 nav-link hover:text-emerald-200 transition-colors" href="#route">Destinations</a>
+    <a class="text-sm text-emerald-50/60 nav-link hover:text-emerald-200 transition-colors" href="#detail">Full Schedule</a>
+    <a class="text-sm text-emerald-50/60 nav-link hover:text-emerald-200 transition-colors" href="#budget">Budget</a>
+  </div>
+  <!-- Mobile hamburger -->
+  <button id="menuBtn" class="md:hidden text-emerald-50 p-2" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+    <span class="material-symbols-outlined text-2xl">menu</span>
+  </button>
+</nav>
+
+<!-- Mobile menu -->
+<div id="mobileMenu" class="hidden fixed inset-0 z-[60] bg-surface/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8">
+  <button class="absolute top-4 right-6 text-emerald-50" onclick="this.parentElement.classList.add('hidden')">
+    <span class="material-symbols-outlined text-3xl">close</span>
+  </button>
+  <a class="text-xl text-emerald-50/70" href="../index.html" onclick="this.parentElement.classList.add('hidden')">← 首頁</a>
+  <a class="text-xl text-primary font-bold" href="#itinerary" onclick="this.parentElement.classList.add('hidden')">Itinerary</a>
+  <a class="text-xl text-emerald-50/70" href="#route" onclick="this.parentElement.classList.add('hidden')">Destinations</a>
+  <a class="text-xl text-emerald-50/70" href="#detail" onclick="this.parentElement.classList.add('hidden')">Full Schedule</a>
+  <a class="text-xl text-emerald-50/70" href="#budget" onclick="this.parentElement.classList.add('hidden')">Budget</a>
+</div>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzXoacZSq0f87ITHNfTw5xaHdvcgn_mUbBbHe9bmcDnGcPbGg1DA-3ofdJ4FLaXSr64ICH3Rr0vsFkh1Q_aC8y8iRq0HW8AIGANSdBy6SQPCy2BwYpRMXQojiJQWzxAqaNvDgpXX0SwbDEVek4JXDPg8D7MsvBUkZ-yx6W2ANOwRaLWV8Rp1uBVoy1rhauSW8Xren2cJGekDGo0FBkQN5H3G0P-Q8_Ho7S6Bf8mMRAUuNwdecg9BpD4wod3bC0nEe1EIvaRR8SFCqk"
+         alt="Matterhorn" id="heroImg"
+         class="w-full h-[120%] object-cover will-change-transform" />
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(18,20,22,.15) 0%, rgba(18,20,22,.55) 65%, #121416 100%)"></div>
+  </div>
+  <div id="heroText" class="relative z-10 text-center px-6 opacity-0 translate-y-8 transition-all duration-[1200ms]" style="transition-timing-function: cubic-bezier(.16,1,.3,1);">
+    <!-- Large Chinese + English title -->
+    <h1 class="mb-4">
+      <span class="block text-4xl sm:text-6xl md:text-8xl font-headline font-extrabold text-primary leading-[1.1] tracking-tight">2026 瑞士 & 義大利</span>
+      <span class="block text-3xl sm:text-5xl md:text-7xl font-headline font-extrabold text-white leading-[1.1] mt-1">蜜月之旅</span>
+    </h1>
+
+    <!-- Route cities -->
+    <p class="text-xs sm:text-sm md:text-base tracking-[0.15em] uppercase text-emerald-50/60 mb-8 leading-relaxed max-w-2xl mx-auto">
+      Zürich → Lucerne → Interlaken → Grindelwald → Zermatt →<br class="hidden sm:block" />
+      Milan → Dolomites → Venice
+    </p>
+
+    <!-- Info cards -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6 max-w-xl mx-auto">
+      <div class="backdrop-blur-xl bg-white/[0.07] border border-white/10 rounded-xl px-6 py-4 text-left flex-1">
+        <p class="text-[10px] uppercase tracking-[0.2em] text-primary font-bold mb-1">Expedition Dates</p>
+        <p class="text-base sm:text-lg font-headline font-bold text-white">May 14 — Jun 3, 2026</p>
+        <p class="text-xs text-emerald-50/50 mt-0.5">21 Days across the Alps</p>
+      </div>
+      <div class="backdrop-blur-xl bg-white/[0.07] border border-white/10 rounded-xl px-6 py-4 text-left flex-1">
+        <p class="text-[10px] uppercase tracking-[0.2em] text-primary font-bold mb-1">The Crew</p>
+        <p class="text-base sm:text-lg font-headline font-bold text-white">Justin & YoYo</p>
+        <p class="text-xs text-emerald-50/50 mt-0.5">2 Explorers, 1 Epic Journey</p>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10" style="animation: breathe 2.5s ease-in-out infinite">
+    <span class="text-[9px] tracking-[0.2em] uppercase text-white/35">Scroll</span>
+    <div class="w-[1px] h-7" style="background: linear-gradient(to bottom, rgba(255,255,255,.25), transparent)"></div>
+  </div>
+</section>
+
+<!-- ═══════ ROUTE MAP ═══════ -->
+<section id="route" class="py-16 md:py-24 bg-surface-container-low px-6">
+  <div class="max-w-6xl mx-auto text-center mb-10 md:mb-16">
+    <p class="text-[10px] tracking-[0.25em] uppercase text-on-surface-variant mb-2">The Grand Tour</p>
+    <h2 class="text-2xl md:text-3xl font-headline font-light italic text-emerald-50">From the Peaks to the Floating City</h2>
+  </div>
+  <div class="max-w-6xl mx-auto rounded-2xl overflow-hidden" style="border: 1px solid rgba(65,73,68,0.3);">
+    <div id="routeMap" style="height: 420px; width: 100%; background: #121416;"></div>
+  </div>
+  <!-- City legend below map -->
+  <div class="max-w-4xl mx-auto mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2">
+    <span class="text-[10px] md:text-xs uppercase tracking-widest text-on-surface-variant">Zürich</span>
+    <span class="text-on-surface-variant/30">→</span>
+    <span class="text-[10px] md:text-xs uppercase tracking-widest text-on-surface-variant">Lucerne</span>
+    <span class="text-on-surface-variant/30">→</span>
+    <span class="text-[10px] md:text-xs uppercase tracking-widest text-on-surface-variant">Interlaken</span>
+    <span class="text-on-surface-variant/30">→</span>
+    <span class="text-[10px] md:text-xs uppercase tracking-widest text-on-surface-variant">Grindelwald</span>
+    <span class="text-on-surface-variant/30">→</span>
+    <span class="text-[10px] md:text-xs uppercase tracking-widest text-on-surface-variant">Zermatt</span>
+    <span class="text-on-surface-variant/30">→</span>
+    <span class="text-[10px] md:text-xs uppercase tracking-widest text-on-surface-variant">Milan</span>
+    <span class="text-on-surface-variant/30">→</span>
+    <span class="text-[10px] md:text-xs uppercase tracking-widest text-on-surface-variant">Dolomites</span>
+    <span class="text-on-surface-variant/30">→</span>
+    <span class="text-[10px] md:text-xs uppercase tracking-widest text-on-surface-variant">Venice</span>
+  </div>
+</section>
+
+<!-- ═══════ ITINERARY TIMELINE ═══════ -->
+<main id="itinerary" class="relative py-16 md:py-24 px-6 md:px-12 bg-surface">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- ── Section 1: Lucerne Reflections ── -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-20 md:mb-32 items-center fade-up">
+      <div class="md:col-span-7 rounded-xl overflow-hidden aspect-[16/10] img-hover cursor-pointer">
+        <img src="https://images.unsplash.com/photo-1527668752968-14dc70a27c95?w=1200&q=80"
+             alt="Lucerne Chapel Bridge" class="w-full h-full object-cover transition-transform duration-700" />
+      </div>
+      <div class="md:col-span-5 md:pl-8">
+        <div class="flex items-center gap-4 mb-5">
+          <span class="text-5xl md:text-6xl font-headline font-extrabold text-primary/20">01</span>
+          <div class="h-[1px] w-10 bg-primary-container"></div>
+          <span class="text-xs uppercase tracking-[0.2em] text-primary">May 14 — 16</span>
+        </div>
+        <h3 class="text-3xl md:text-4xl font-headline font-bold mb-2 text-emerald-50">Lucerne Reflections</h3>
+        <p class="text-sm text-primary mb-5 tracking-wider">蘇黎世 · 琉森 · 龍疆</p>
+        <p class="text-on-surface-variant text-base leading-relaxed mb-6 font-light">
+          從蘇黎世機場出發，穿越中世紀舊城區，沿著琉森湖畔漫步。卡貝爾橋的黃昏倒影、龍疆湖的翡翠碧綠，每一步都是瑞士最動人的序曲。
+        </p>
+        <div class="flex gap-3 flex-wrap">
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Kapellbrücke</span>
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Lungern Lake</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 2: Interlaken Gateway ── -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-20 md:mb-32 items-center fade-up">
+      <div class="md:col-span-5 md:pr-8 md:order-1 order-2 md:text-right flex flex-col md:items-end">
+        <div class="flex items-center gap-4 mb-5 md:flex-row-reverse">
+          <span class="text-5xl md:text-6xl font-headline font-extrabold text-primary/20">02</span>
+          <div class="h-[1px] w-10 bg-primary-container"></div>
+          <span class="text-xs uppercase tracking-[0.2em] text-primary">May 16 — 17</span>
+        </div>
+        <h3 class="text-3xl md:text-4xl font-headline font-bold mb-2 text-emerald-50">Interlaken Gateway</h3>
+        <p class="text-sm text-primary mb-5 tracking-wider">藍湖 · 奧希寧湖 · 茵特拉肯</p>
+        <p class="text-on-surface-variant text-base leading-relaxed mb-6 font-light md:text-right">
+          離開龍疆，沿途造訪如夢似幻的 Blausee 藍湖，再登上 Oeschinensee 奧希寧湖健行。碧綠湖水被雪山環抱，壯闊中帶著寧靜。傍晚抵達茵特拉肯，少女峰地區的大門已為我們敞開。
+        </p>
+        <div class="flex gap-3 flex-wrap md:justify-end">
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Blausee</span>
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Oeschinensee</span>
+        </div>
+      </div>
+      <div class="md:col-span-7 rounded-xl overflow-hidden aspect-[16/10] img-hover cursor-pointer md:order-2 order-1">
+        <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=1200&q=80"
+             alt="Blausee Lake" class="w-full h-full object-cover transition-transform duration-700" />
+      </div>
+    </div>
+
+    <!-- ── Section 3: Grindelwald Heights ── -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-20 md:mb-32 items-center fade-up">
+      <div class="md:col-span-7 rounded-xl overflow-hidden aspect-[16/10] img-hover cursor-pointer">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/Eiger_met_Grindelwald%2C_Zwitserland.jpg"
+             alt="Grindelwald and Eiger" class="w-full h-full object-cover transition-transform duration-700" />
+      </div>
+      <div class="md:col-span-5 md:pl-8">
+        <div class="flex items-center gap-4 mb-5">
+          <span class="text-5xl md:text-6xl font-headline font-extrabold text-primary/20">03</span>
+          <div class="h-[1px] w-10 bg-primary-container"></div>
+          <span class="text-xs uppercase tracking-[0.2em] text-primary">May 17 — 20</span>
+        </div>
+        <h3 class="text-3xl md:text-4xl font-headline font-bold mb-2 text-emerald-50">Grindelwald Heights</h3>
+        <p class="text-sm text-primary mb-5 tracking-wider">格林德瓦 · 少女峰 · 米倫</p>
+        <p class="text-on-surface-variant text-base leading-relaxed mb-6 font-light">
+          清晨醒來，艾格峰北壁就在窗前。攀上 First 山頂，Bachalpsee 湖映出雪山倒影。搭乘齒軌列車登上少女峰之巔，站在歐洲之頂俯瞰阿萊奇冰川。再轉往米倫，懸崖上的天空之城。
+        </p>
+        <div class="flex gap-3 flex-wrap">
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Jungfraujoch</span>
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Bachalpsee</span>
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Mürren</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 4: Zermatt & The Matterhorn ── -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-20 md:mb-32 items-center fade-up">
+      <div class="md:col-span-5 md:pr-8 md:order-1 order-2 md:text-right flex flex-col md:items-end">
+        <div class="flex items-center gap-4 mb-5 md:flex-row-reverse">
+          <span class="text-5xl md:text-6xl font-headline font-extrabold text-primary/20">04</span>
+          <div class="h-[1px] w-10 bg-primary-container"></div>
+          <span class="text-xs uppercase tracking-[0.2em] text-primary">May 21 — 23</span>
+        </div>
+        <h3 class="text-3xl md:text-4xl font-headline font-bold mb-2 text-emerald-50">Zermatt & The Matterhorn</h3>
+        <p class="text-sm text-primary mb-5 tracking-wider">策馬特 · 馬特洪峰 · 五湖健行</p>
+        <p class="text-on-surface-variant text-base leading-relaxed mb-6 font-light md:text-right">
+          無車小鎮策馬特，空氣裡只有清脆的牛鈴聲。搭乘 Gornergrat 登山鐵路，馬特洪峰的金字塔輪廓在雲霧中若隱若現。冰川天堂觀景台海拔 3,883 公尺，世界在腳下。第三天走訪經典五湖健行路線，每一面湖都倒映著馬特洪峰。
+        </p>
+        <div class="flex gap-3 flex-wrap md:justify-end">
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Matterhorn</span>
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Glacier Paradise</span>
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">5-Seenweg</span>
+        </div>
+      </div>
+      <div class="md:col-span-7 rounded-xl overflow-hidden aspect-[16/10] img-hover cursor-pointer md:order-2 order-1">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/3802_-_Zermatt_-_Matterhorn_viewed_from_Gornergratbahn.JPG"
+             alt="Matterhorn from Gornergrat" class="w-full h-full object-cover transition-transform duration-700" />
+      </div>
+    </div>
+
+    <!-- ── Section 5: Milan Interlude ── -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-20 md:mb-32 items-center fade-up">
+      <div class="md:col-span-7 rounded-xl overflow-hidden aspect-[16/10] img-hover cursor-pointer">
+        <img src="https://images.unsplash.com/photo-1520440229-6469a149ac59?w=1200&q=80"
+             alt="Milan Cathedral" class="w-full h-full object-cover transition-transform duration-700" />
+      </div>
+      <div class="md:col-span-5 md:pl-8">
+        <div class="flex items-center gap-4 mb-5">
+          <span class="text-5xl md:text-6xl font-headline font-extrabold text-primary/20">05</span>
+          <div class="h-[1px] w-10 bg-primary-container"></div>
+          <span class="text-xs uppercase tracking-[0.2em] text-primary">May 24 — 25</span>
+        </div>
+        <h3 class="text-3xl md:text-4xl font-headline font-bold mb-2 text-emerald-50">Milan Interlude</h3>
+        <p class="text-sm text-primary mb-5 tracking-wider">米蘭 · 大教堂 · 時尚之都</p>
+        <p class="text-on-surface-variant text-base leading-relaxed mb-6 font-light">
+          從阿爾卑斯山脈南下，進入義大利的優雅心臟。米蘭大教堂的哥德式尖塔在陽光中閃耀，Galleria Vittorio Emanuele II 的玻璃穹頂下，品一杯道地的 Espresso。在這座時尚之都留下我們的婚紗照。
+        </p>
+        <div class="flex gap-3 flex-wrap">
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Duomo di Milano</span>
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Photo Shoot</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 6: Dolomites Majesty ── -->
+    <div class="mb-20 md:mb-32 fade-up">
+      <!-- Full-width Dolomites hero image -->
+      <div class="rounded-2xl overflow-hidden mb-10 img-hover cursor-pointer aspect-[21/9]">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Paternkofel_Zinnen_Panorama.jpg/1920px-Paternkofel_Zinnen_Panorama.jpg"
+             alt="Tre Cime di Lavaredo panorama" class="w-full h-full object-cover transition-transform duration-700" />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start">
+        <div class="md:col-span-5">
+          <div class="flex items-center gap-4 mb-5">
+            <span class="text-5xl md:text-6xl font-headline font-extrabold text-primary/20">06</span>
+            <div class="h-[1px] w-10 bg-primary-container"></div>
+            <span class="text-xs uppercase tracking-[0.2em] text-primary">May 26 — 29</span>
+          </div>
+          <h3 class="text-3xl md:text-4xl font-headline font-bold mb-2 text-emerald-50">Dolomites Majesty</h3>
+          <p class="text-sm text-primary mb-5 tracking-wider">多洛米堤 · 三尖峰 · 富內斯山谷</p>
+          <p class="text-on-surface-variant text-base leading-relaxed mb-6 font-light">
+            租車前進多洛米堤山區。刀鋒山 Seceda 的鋸齒稜線震撼人心，富內斯山谷的教堂如明信片般完美。造訪翡翠色的布萊艾斯湖，最後攀上三峰山 Tre Cime，白色石灰岩巨塔在夕陽下染成玫瑰金色。
+          </p>
+          <div class="flex gap-3 flex-wrap">
+            <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Tre Cime</span>
+            <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Seceda</span>
+            <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Lago di Braies</span>
+          </div>
+        </div>
+        <!-- Dolomites photo grid -->
+        <div class="md:col-span-7 rounded-xl overflow-hidden aspect-[16/10] img-hover cursor-pointer">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/58/Pragser_wildsee.JPG"
+               alt="Lago di Braies" class="w-full h-full object-cover transition-transform duration-700" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 7: Venetian Elegance ── -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mb-20 md:mb-32 items-center fade-up">
+      <div class="md:col-span-7 rounded-xl overflow-hidden aspect-[16/10] img-hover cursor-pointer">
+        <img src="https://images.unsplash.com/photo-1534113414509-0eec2bfb493f?w=1200&q=80"
+             alt="Venice Grand Canal" class="w-full h-full object-cover transition-transform duration-700" />
+      </div>
+      <div class="md:col-span-5 md:pl-8">
+        <div class="flex items-center gap-4 mb-5">
+          <span class="text-5xl md:text-6xl font-headline font-extrabold text-primary/20">07</span>
+          <div class="h-[1px] w-10 bg-primary-container"></div>
+          <span class="text-xs uppercase tracking-[0.2em] text-primary">May 30 — 31</span>
+        </div>
+        <h3 class="text-3xl md:text-4xl font-headline font-bold mb-2 text-emerald-50">Venetian Elegance</h3>
+        <p class="text-sm text-primary mb-5 tracking-wider">威尼斯 · 貢多拉 · 聖馬可</p>
+        <p class="text-on-surface-variant text-base leading-relaxed mb-6 font-light">
+          蜜月的最終章，屬於漂浮之城。乘坐水上巴士穿越大運河，在聖馬可廣場聽手風琴。搭乘貢多拉穿過寧靜的小運河，讓威尼斯的月光為旅程畫下完美句點。別忘了提前預約入城費！
+        </p>
+        <div class="flex gap-3 flex-wrap">
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">Grand Canal</span>
+          <span class="px-4 py-2 bg-secondary-container/30 rounded-full text-[10px] uppercase tracking-widest backdrop-blur-md">San Marco</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══════ FULL DETAILED SCHEDULE ═══════ -->
+<section id="detail" class="py-16 md:py-24 bg-surface-container-low px-6">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-12">
+      <p class="text-[10px] tracking-[0.25em] uppercase text-on-surface-variant mb-2">Complete Schedule</p>
+      <h2 class="text-2xl md:text-3xl font-headline font-light italic text-emerald-50">每日行程一覽</h2>
+    </div>
+
+    <!-- Day items -->
+    <div class="space-y-3" id="scheduleList">
+
+      <!-- Day 0 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">0</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/13 (三)</span>
+              <span class="text-xs text-primary">出發</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">21:05 搭機前往蘇黎世</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <p class="text-sm text-on-surface-variant leading-relaxed">晚間 21:05 從桃園機場出發，搭乘飛機前往蘇黎世，開始我們的蜜月旅程。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 1 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">1</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/14 (四)</span>
+              <span class="text-xs text-primary">蘇黎世 → 琉森</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">7:30 抵達蘇黎世，前往琉森</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">主景點</span><span class="text-sm text-on-surface-variant">琉森老城區</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">琉森</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">早晨 7:30 抵達蘇黎世機場，搭車前往琉森。漫步卡貝爾橋、獅子紀念碑，感受中世紀瑞士古城的魅力。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 2 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">2</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/15 (五)</span>
+              <span class="text-xs text-primary">琉森 → 龍疆</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">琉森 → Stäubifall 瀑布 → 龍疆</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">自駕</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">龍疆</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">自駕前往 Stäubifall Unterschächen 瀑布，再前往龍疆。龍疆湖的翡翠碧綠色在午後陽光下最為動人。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 3 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">3</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/16 (六)</span>
+              <span class="text-xs text-primary">龍疆 → 茵特拉肯</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">Blausee 藍湖 · Oeschinensee 湖健行 · Spiez</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">自駕</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">主景點</span><span class="text-sm text-on-surface-variant">Oeschinensee 湖健行 / 藍湖</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">茵特拉肯 / Wilderswil</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">龍疆出發，途經夢幻 Blausee 藍湖，登上 Oeschinensee 奧希寧湖健行。經過可愛的 Spiez 小鎮，傍晚入住茵特拉肯。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 4 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">4</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/17 (日)</span>
+              <span class="text-xs text-primary">Wilderswil → 格林德瓦</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">First 山頂 → Bachalpsee 湖健行</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">主景點</span><span class="text-sm text-on-surface-variant">First → Bachalpsee 湖健行</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">格林德瓦</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">搭乘纜車上 First 山頂，沿著步道健行到 Bachalpsee 湖。雪山倒映在清澈湖面，是格林德瓦最經典的景色。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 5 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">5</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/18 (一)</span>
+              <span class="text-xs text-primary">格林德瓦</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">格林德瓦拍照日（夢幻小山坡）</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">格林德瓦</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">格林德瓦拍照日！定位 First Garage，從小路走進去，不到兩分鐘即到達夢幻小山坡。在艾格峰前留下我們最美的回憶。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 6 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">6</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/19 (二)</span>
+              <span class="text-xs text-primary">少女峰 → Wengen</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">少女峰 → 小夏戴克健行 + Fallboden 湖 → Wengen</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">主景點</span><span class="text-sm text-on-surface-variant">少女峰 · 小夏戴克健行 · Fallboden 湖</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">格林德瓦</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">搭乘齒軌列車登上少女峰，歐洲之巔海拔 3,454 公尺！下山後從小夏戴克（Kleine Scheidegg）健行經 Fallboden 湖，走到 Wengen 小鎮。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 7 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">7</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/20 (三)</span>
+              <span class="text-xs text-primary">勞特布魯尼 → 米倫</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">懸崖上的天空之城——米倫</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">主景點</span><span class="text-sm text-on-surface-variant">米倫</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">勞特布魯尼山谷旅館</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">前往勞特布魯尼山谷，搭纜車上到懸崖上的無車小鎮——米倫。在這裡可以眺望少女峰、艾格峰和僧侶峰三大名峰，入住山谷中的特色旅館。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 8 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">8</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/21 (四)</span>
+              <span class="text-xs text-primary">茵特拉肯 → 策馬特</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">火車轉乘 3 次 · 交通日</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">火車轉乘 3 次（9:59 出發 → 12:17 抵達）</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">策馬特</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">交通日。從勞特布魯尼出發，9:59 於茵特拉肯搭火車，轉乘 3 次，12:17 抵達策馬特。沿途盡是瑞士最壯麗的鐵道風光。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 9 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">9</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/22 (五)</span>
+              <span class="text-xs text-primary">馬特洪峰 · 冰川天堂</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">Gornergrat 登山鐵路 · 冰川天堂觀景台</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">策馬特</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">搭乘 Gornergrat 登山鐵路或前往冰川天堂（Glacier Paradise），在海拔 3,883 公尺的觀景台上，馬特洪峰的金字塔輪廓就在眼前。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 10 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">10</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/23 (六)</span>
+              <span class="text-xs text-primary">五湖健行</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">5-Seenweg 五湖健行路線</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">策馬特</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">策馬特經典的五湖健行路線（5-Seenweg），沿途經過五個高山湖泊，每一面湖都能看見馬特洪峰的倒影，是策馬特最推薦的健行路線。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 11 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">11</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/24 (日)</span>
+              <span class="text-xs text-primary">策馬特 → 米蘭</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">火車轉 2 次 · 交通日</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">火車轉 2 次（11:06 出發 → 14:55 抵達）</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">米蘭</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">交通日。11:06 從策馬特出發，火車轉乘 2 次，14:55 抵達米蘭。從瑞士阿爾卑斯穿越到義大利平原，風景從雪山變為地中海風情。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 12 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">12</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/25 (一)</span>
+              <span class="text-xs text-primary">米蘭拍照</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">米蘭市區 · 拍照日</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">主景點</span><span class="text-sm text-on-surface-variant">米蘭市區</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">米蘭</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">在米蘭大教堂前、艾曼紐二世迴廊留下我們的婚紗照。悠閒逛逛市區，品嚐道地義式美食。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 13 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">13</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/26 (二)</span>
+              <span class="text-xs text-primary">米蘭 → Ortisei</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">自駕前進多洛米堤山區</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">自駕</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">Ortisei</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">交通日。從米蘭租車出發，一路開往多洛米堤山區的 Ortisei 小鎮，沿途風景從平原逐漸轉為壯麗的白雲石山脈。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 14 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">14</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/27 (三)</span>
+              <span class="text-xs text-primary">Seceda · 富內斯山谷</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">刀鋒山 Seceda · Val di Funes</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">自駕</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">Ortisei</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">搭纜車上 Seceda 刀鋒山，鋸齒狀的稜線是多洛米堤最具代表性的景觀。下午前往富內斯山谷（Val di Funes），拍攝經典的聖瑪德蓮娜教堂。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 15 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">15</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/28 (四)</span>
+              <span class="text-xs text-primary">布萊艾斯湖 → 三峰山</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">Lago di Braies 遊船 · Passo Tre Croci 215 trail</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">自駕（約 2 小時）</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">主景點</span><span class="text-sm text-on-surface-variant">遊船 45min / 約 50 歐 · Passo Tre Croci 215 trail 往返約 5hrs</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">多洛米蒂</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">從 Ortisei 開車約 2 小時前往布萊艾斯湖（Lago di Braies），翡翠綠的湖水搭配木船是多洛米堤的標誌畫面。之後前往三峰山附近住宿。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 16 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">16</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/29 (五)</span>
+              <span class="text-xs text-primary">Tre Cime 三峰山</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">三峰山健行（魔界之路 · 山洞）</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">自駕</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">多洛米蒂</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">整天探索 Tre Cime di Lavaredo 三峰山！走環山步道，經過傳說中的「魔界之路」山洞，三座白色石灰岩巨塔在藍天下令人震撼。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 17 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">17</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/30 (六)</span>
+              <span class="text-xs text-primary">三峰山 → 威尼斯</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">下午抵達威尼斯 · 約 1.5 小時車程</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">自駕（約 1.5 小時）</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">威尼斯</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">交通日。上午離開多洛米堤，下午抵達威尼斯。從山的世界來到水的世界，傍晚在大運河畔享受第一個威尼斯日落。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 18 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">18</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">5/31 (日)</span>
+              <span class="text-xs text-primary">威尼斯一日遊 → 米蘭</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">威尼斯 · 17:55 巴士回米蘭（21:25 抵達）</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">交通</span><span class="text-sm text-on-surface-variant">巴士（17:55 → 21:25）</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">主景點</span><span class="text-sm text-on-surface-variant">威尼斯</span></div>
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">米蘭</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">白天盡情遊覽威尼斯——聖馬可廣場、嘆息橋、里阿爾托橋。⚠️ 記得提前 4 天在官網繳交入城費！傍晚 17:55 搭巴士返回米蘭。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 19 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">19</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">6/1 (一)</span>
+              <span class="text-xs text-primary">米蘭市區</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">最後一天自由行 · 米蘭市區</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <div class="flex items-center gap-2 mb-2"><span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/30 uppercase tracking-wider">住宿</span><span class="text-sm text-on-surface-variant">米蘭</span></div>
+            <p class="text-sm text-on-surface-variant leading-relaxed">旅程的最後一天，悠閒享受米蘭市區。逛逛布雷拉區、納維利運河區，最後再來一杯 Espresso 和一球 Gelato。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 20-21 -->
+      <div class="day-card rounded-xl bg-surface-container/80 backdrop-blur-md overflow-hidden cursor-pointer transition-colors hover:bg-surface-container-high/60" onclick="toggleDay(this)">
+        <div class="flex items-center gap-4 px-5 py-4 md:px-6">
+          <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+            <span class="text-xs font-headline font-bold text-primary">20</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-sm font-bold text-emerald-50">6/2–3 (二–三)</span>
+              <span class="text-xs text-primary">回程</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">12:45 MXP 起飛 → 6/3 9:50 抵達台灣</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant/50 text-lg transition-transform duration-300 chevron">expand_more</span>
+        </div>
+        <div class="day-detail px-5 pb-4 md:px-6">
+          <div class="border-t border-outline-variant/20 pt-3">
+            <p class="text-sm text-on-surface-variant leading-relaxed">6/2 中午 12:45 從米蘭 MXP 機場起飛，6/3 早上 9:50 抵達台灣。帶著滿滿的回憶回家，我們的蜜月圓滿結束。</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ BUDGET ═══════ -->
+<section id="budget" class="py-16 md:py-24 bg-surface px-6">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-12">
+      <p class="text-[10px] tracking-[0.25em] uppercase text-on-surface-variant mb-2">Budget Overview</p>
+      <h2 class="text-2xl md:text-3xl font-headline font-light italic text-emerald-50 mb-3">費用總覽</h2>
+      <div class="inline-flex items-baseline gap-2 mt-2">
+        <span class="text-4xl md:text-5xl font-headline font-extrabold text-primary">NT$ 424,110</span>
+        <span class="text-sm text-on-surface-variant font-light">/ 2 人</span>
+      </div>
+    </div>
+
+    <!-- Budget category cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+
+      <!-- Transportation -->
+      <div class="rounded-2xl bg-surface-container-low p-6 fade-up">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-xl">flight</span>
+          </div>
+          <div>
+            <h3 class="text-sm font-headline font-bold text-emerald-50">交通</h3>
+            <p class="text-xs text-on-surface-variant">Transportation</p>
+          </div>
+          <span class="ml-auto text-lg font-headline font-bold text-primary">$97,405</span>
+        </div>
+        <div class="space-y-2.5">
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">機票（國泰）</span>
+            <span class="text-xs font-medium text-emerald-50">72,596</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">瑞士租車 2 天</span>
+            <span class="text-xs font-medium text-emerald-50">14,800</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">米蘭租車（多洛米堤）</span>
+            <span class="text-xs font-medium text-emerald-50">30,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">茵特拉肯→策馬特 火車</span>
+            <span class="text-xs font-medium text-emerald-50">2,832</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">威尼斯→米蘭 FlixBus</span>
+            <span class="text-xs font-medium text-emerald-50">1,292</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">其他交通</span>
+            <span class="text-xs font-medium text-emerald-50">48,481</span>
+          </div>
+        </div>
+        <!-- Bar -->
+        <div class="mt-4 h-1 rounded-full bg-surface-container-highest overflow-hidden">
+          <div class="h-full rounded-full bg-gradient-to-r from-primary to-primary-container" style="width: 58%"></div>
+        </div>
+      </div>
+
+      <!-- Accommodation -->
+      <div class="rounded-2xl bg-surface-container-low p-6 fade-up">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-xl">hotel</span>
+          </div>
+          <div>
+            <h3 class="text-sm font-headline font-bold text-emerald-50">住宿</h3>
+            <p class="text-xs text-on-surface-variant">Accommodation</p>
+          </div>
+          <span class="ml-auto text-lg font-headline font-bold text-primary">$130,529</span>
+        </div>
+        <div class="space-y-2.5">
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/14 琉森</span>
+            <span class="text-xs font-medium text-emerald-50">6,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/15 龍疆</span>
+            <span class="text-xs font-medium text-emerald-50">6,114</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/16 茵特拉肯</span>
+            <span class="text-xs font-medium text-emerald-50">4,200</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/17–18 格林德瓦</span>
+            <span class="text-xs font-medium text-emerald-50">27,720</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/19 格林德瓦</span>
+            <span class="text-xs font-medium text-emerald-50">11,400</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/20 勞特布魯尼</span>
+            <span class="text-xs font-medium text-emerald-50">4,600</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/21–23 策馬特</span>
+            <span class="text-xs font-medium text-emerald-50">30,845</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/24–25 米蘭</span>
+            <span class="text-xs font-medium text-emerald-50">22,700</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/26–27 Ortisei</span>
+            <span class="text-xs font-medium text-emerald-50">15,550</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/28–29 多洛米蒂</span>
+            <span class="text-xs font-medium text-emerald-50">14,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/30 威尼斯</span>
+            <span class="text-xs font-medium text-emerald-50">3,800</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">5/31–6/1 米蘭</span>
+            <span class="text-xs font-medium text-emerald-50">10,600</span>
+          </div>
+        </div>
+        <div class="mt-4 h-1 rounded-full bg-surface-container-highest overflow-hidden">
+          <div class="h-full rounded-full bg-gradient-to-r from-primary to-primary-container" style="width: 100%"></div>
+        </div>
+      </div>
+
+      <!-- Others -->
+      <div class="rounded-2xl bg-surface-container-low p-6 fade-up">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-xl">camera</span>
+          </div>
+          <div>
+            <h3 class="text-sm font-headline font-bold text-emerald-50">其他</h3>
+            <p class="text-xs text-on-surface-variant">Others</p>
+          </div>
+          <span class="ml-auto text-lg font-headline font-bold text-primary">$96,580</span>
+        </div>
+        <div class="space-y-2.5">
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">瑞士婚紗（780 CHF）</span>
+            <span class="text-xs font-medium text-emerald-50">31,200</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">米蘭婚紗</span>
+            <span class="text-xs font-medium text-emerald-50">20,720</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">餐飲</span>
+            <span class="text-xs font-medium text-emerald-50">38,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">保險</span>
+            <span class="text-xs font-medium text-emerald-50">4,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">威尼斯聖馬可大教堂</span>
+            <span class="text-xs font-medium text-emerald-50">2,280</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant">威尼斯入城費</span>
+            <span class="text-xs font-medium text-emerald-50">380</span>
+          </div>
+        </div>
+        <div class="mt-4 h-1 rounded-full bg-surface-container-highest overflow-hidden">
+          <div class="h-full rounded-full bg-gradient-to-r from-primary to-primary-container" style="width: 74%"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Summary bar -->
+    <div class="rounded-2xl bg-surface-container-high/50 backdrop-blur-md p-5 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 fade-up">
+      <div class="flex items-center gap-6 flex-wrap justify-center">
+        <div class="text-center">
+          <p class="text-2xl font-headline font-bold text-primary">21</p>
+          <p class="text-[10px] uppercase tracking-widest text-on-surface-variant">天</p>
+        </div>
+        <div class="w-[1px] h-8 bg-outline-variant/30 hidden md:block"></div>
+        <div class="text-center">
+          <p class="text-2xl font-headline font-bold text-primary">2</p>
+          <p class="text-[10px] uppercase tracking-widest text-on-surface-variant">國家</p>
+        </div>
+        <div class="w-[1px] h-8 bg-outline-variant/30 hidden md:block"></div>
+        <div class="text-center">
+          <p class="text-2xl font-headline font-bold text-primary">8</p>
+          <p class="text-[10px] uppercase tracking-widest text-on-surface-variant">城市</p>
+        </div>
+        <div class="w-[1px] h-8 bg-outline-variant/30 hidden md:block"></div>
+        <div class="text-center">
+          <p class="text-2xl font-headline font-bold text-primary">17</p>
+          <p class="text-[10px] uppercase tracking-widest text-on-surface-variant">晚住宿</p>
+        </div>
+      </div>
+      <div class="text-center md:text-right">
+        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">每人平均</p>
+        <p class="text-2xl font-headline font-bold text-emerald-50">NT$ 212,055 <span class="text-sm font-light text-on-surface-variant">/ 人</span></p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════ CTA ═══════ -->
+<section class="py-24 md:py-32 bg-surface-container-highest relative overflow-hidden text-center px-6">
+  <div class="absolute inset-0 opacity-[0.06]">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Paternkofel_Zinnen_Panorama.jpg/1280px-Paternkofel_Zinnen_Panorama.jpg"
+         alt="" class="w-full h-full object-cover grayscale" />
+  </div>
+  <div class="relative z-10 max-w-xl mx-auto">
+    <h2 class="text-3xl md:text-5xl font-headline font-bold text-white mb-6 leading-tight">Our Legacy Journey Starts Here</h2>
+    <p class="text-on-surface-variant text-base font-light leading-relaxed mb-10">
+      21 天，2 個國家，8 座城市。每一天都精心安排，只為在最美的光線下留下屬於我們的故事。
+    </p>
+    <div class="flex gap-4 justify-center flex-wrap">
+      <button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed px-7 py-3 rounded-xl font-bold text-sm flex items-center gap-2 hover:brightness-110 transition-all font-headline">
+        <span class="material-symbols-outlined text-lg">download_2</span>
+        Download PDF
+      </button>
+      <button class="backdrop-blur-xl bg-surface/45 text-white px-7 py-3 rounded-xl border border-white/10 font-bold text-sm flex items-center gap-2 hover:bg-white/10 transition-all font-headline">
+        <span class="material-symbols-outlined text-lg">share</span>
+        Share Itinerary
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="bg-emerald-950/80 backdrop-blur-md border-t border-emerald-800/20">
+  <div class="max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-16 flex flex-col md:flex-row justify-between gap-8">
+    <div>
+      <div class="text-base font-headline font-extrabold tracking-[0.15em] uppercase text-emerald-50 mb-3">ALPINIST</div>
+      <p class="text-[10px] text-emerald-50/35 max-w-[280px] leading-relaxed">
+        Crafting immersive travel experiences.<br/>Part of The Alpine Lens Editorial.
+      </p>
+    </div>
+    <div class="flex gap-10 md:gap-16">
+      <div class="flex flex-col gap-2">
+        <span class="text-[9px] text-primary font-bold tracking-[0.15em] uppercase mb-1">Concierge</span>
+        <a href="#" class="text-[10px] text-emerald-50/35 tracking-wider uppercase hover:text-emerald-100 transition-colors">Flight Status</a>
+        <a href="#" class="text-[10px] text-emerald-50/35 tracking-wider uppercase hover:text-emerald-100 transition-colors">Insurance</a>
+      </div>
+      <div class="flex flex-col gap-2">
+        <span class="text-[9px] text-primary font-bold tracking-[0.15em] uppercase mb-1">Connect</span>
+        <a href="#" class="text-[10px] text-emerald-50/35 tracking-wider uppercase hover:text-emerald-100 transition-colors">Instagram</a>
+        <a href="#" class="text-[10px] text-emerald-50/35 tracking-wider uppercase hover:text-emerald-100 transition-colors">Pinterest</a>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto border-t border-emerald-50/5 px-6 md:px-12 py-5 text-center">
+    <p class="text-[8px] tracking-[0.2em] uppercase text-emerald-50/18">&copy; 2026 The Alpine Lens Editorial. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<script>
+// ── Leaflet Map ──
+const cities = [
+  { name: "Zürich\n蘇黎世", lat: 47.3769, lng: 8.5417, days: "Day 1" },
+  { name: "Lucerne\n琉森", lat: 47.0502, lng: 8.3093, days: "Day 1–2" },
+  { name: "Lungern\n龍疆", lat: 46.7856, lng: 8.1620, days: "Day 2–3" },
+  { name: "Interlaken\n茵特拉肯", lat: 46.6863, lng: 7.8632, days: "Day 3" },
+  { name: "Grindelwald\n格林德瓦", lat: 46.6244, lng: 8.0413, days: "Day 4–7" },
+  { name: "Lauterbrunnen\n勞特布魯尼", lat: 46.5936, lng: 7.9091, days: "Day 7" },
+  { name: "Zermatt\n策馬特", lat: 46.0207, lng: 7.7491, days: "Day 8–10" },
+  { name: "Milan\n米蘭", lat: 45.4642, lng: 9.1900, days: "Day 11–12" },
+  { name: "Ortisei\n多洛米堤", lat: 46.5742, lng: 11.6717, days: "Day 13–14" },
+  { name: "Tre Cime\n三峰山", lat: 46.6190, lng: 12.3019, days: "Day 15–16" },
+  { name: "Venice\n威尼斯", lat: 45.4408, lng: 12.3155, days: "Day 17–18" },
+  { name: "Milan\n米蘭（回程）", lat: 45.4642, lng: 9.1900, days: "Day 19–20" },
+];
+
+const map = L.map('routeMap', {
+  center: [46.4, 9.8],
+  zoom: 7,
+  zoomControl: true,
+  attributionControl: true,
+  scrollWheelZoom: false,
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19,
+}).addTo(map);
+
+// Dashed route line
+const routeCoords = cities.map(c => [c.lat, c.lng]);
+L.polyline(routeCoords, {
+  color: '#a1d1b9',
+  weight: 2.5,
+  opacity: 0.6,
+  dashArray: '8, 10',
+  lineCap: 'round',
+}).addTo(map);
+
+// Custom circle markers + tooltips
+cities.forEach((c, i) => {
+  // Skip duplicate Milan (last point)
+  if (i === cities.length - 1) return;
+
+  const isMain = [0, 4, 6, 7, 8, 10].includes(i);
+  const marker = L.circleMarker([c.lat, c.lng], {
+    radius: isMain ? 7 : 5,
+    fillColor: '#a1d1b9',
+    fillOpacity: isMain ? 0.9 : 0.6,
+    color: '#a1d1b9',
+    weight: isMain ? 2 : 1,
+    opacity: isMain ? 0.4 : 0.2,
+  }).addTo(map);
+
+  marker.bindTooltip(
+    `<div style="font-family:'Plus Jakarta Sans',sans-serif;text-align:center;line-height:1.4;">
+      <div style="font-weight:700;font-size:12px;letter-spacing:0.05em;">${c.name.split('\n')[0]}</div>
+      <div style="font-size:11px;opacity:0.8;">${c.name.split('\n')[1]}</div>
+      <div style="font-size:10px;color:#a1d1b9;margin-top:2px;">${c.days}</div>
+    </div>`,
+    {
+      permanent: false,
+      direction: 'top',
+      offset: [0, -10],
+      className: 'map-tooltip',
+    }
+  );
+});
+
+// Hero parallax + nav bg
+const heroImg = document.getElementById('heroImg');
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  heroImg.style.transform = `translateY(-${y * 0.3}px)`;
+  navbar.style.background = y > 80 ? 'rgba(18,20,22,0.75)' : 'transparent';
+  navbar.style.backdropFilter = y > 80 ? 'blur(20px)' : 'none';
+}, { passive: true });
+
+// Hero fade in
+setTimeout(() => {
+  const h = document.getElementById('heroText');
+  h.style.opacity = '1';
+  h.style.transform = 'none';
+}, 300);
+
+// Intersection Observer for fade-up
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+// Accordion toggle
+function toggleDay(card) {
+  const detail = card.querySelector('.day-detail');
+  const chevron = card.querySelector('.chevron');
+  const isOpen = detail.classList.contains('open');
+  // Close all others
+  document.querySelectorAll('.day-detail.open').forEach(d => {
+    d.classList.remove('open');
+    d.closest('.day-card').querySelector('.chevron').style.transform = 'rotate(0deg)';
+  });
+  if (!isOpen) {
+    detail.classList.add('open');
+    chevron.style.transform = 'rotate(180deg)';
+  }
+}
+
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>

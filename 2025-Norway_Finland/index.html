@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-TW">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>2025 挪威 & 芬蘭 冬季自駕之旅 | Arctic Vistas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "on-primary":"#233148","surface-container-low":"#161c22","on-surface-variant":"#c5c6cd",
+        "primary":"#b9c7e4","tertiary":"#00e0b7","surface-container-high":"#242b31",
+        "surface-container-highest":"#2f353c","on-background":"#dde3eb","on-surface":"#dde3eb",
+        "secondary":"#c6c6c7","on-tertiary":"#00382c","outline-variant":"#44474d",
+        "primary-fixed":"#d6e3ff","outline":"#8f9097","surface-dim":"#0e141a",
+        "secondary-container":"#454747","surface-container":"#1a2026","surface":"#0e141a",
+        "primary-container":"#0a192f","tertiary-container":"#001e16","background":"#0e141a",
+        "surface-variant":"#2f353c","error":"#ffb4ab","surface-bright":"#333a40",
+        "on-primary-container":"#74829d","surface-container-lowest":"#080f14",
+      },
+      fontFamily: {
+        headline: ["Plus Jakarta Sans"],
+        body: ["Inter"],
+      },
+    },
+  },
+}
+</script>
+<style>
+body { font-family: 'Inter', sans-serif; }
+h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+.glass-panel { background: rgba(10, 25, 47, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.tonal-carving { background: linear-gradient(135deg, #0A192F 0%, #0E141A 100%); }
+#itinerary-map { height: 500px; width: 100%; border-radius: 0.5rem; }
+.aurora-glow { position:absolute; top:-10%; left:-10%; width:120%; height:120%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(0,224,183,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(185,199,228,0.05) 0%, transparent 50%);
+  pointer-events:none; animation: auroraShift 20s ease-in-out infinite alternate; }
+@keyframes auroraShift {
+  0% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(-3%,2%) scale(1.05); }
+  100% { transform: translate(2%,-1%) scale(1); }
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(40px); } to { opacity:1; transform:translateY(0); } }
+.fade-up { opacity:0; }
+.fade-up.visible { animation: fadeUp 0.8s ease forwards; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:#0e141a; }
+::-webkit-scrollbar-thumb { background:#2f353c; border-radius:4px; }
+.day-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.day-card:hover { transform: translateY(-4px); box-shadow: 0 0 40px rgba(0,224,183,0.06); }
+.timeline-dot { width:12px; height:12px; border-radius:50%; background:#00e0b7; border:2px solid #0e141a;
+  box-shadow: 0 0 12px rgba(0,224,183,0.4); position:relative; z-index:2; flex-shrink:0; }
+.timeline-line { width:2px; background: linear-gradient(to bottom, #00e0b7 0%, #0a192f 100%);
+  position:absolute; left:5px; top:12px; bottom:0; }
+.region-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(0,224,183,0.1);
+  color:#00e0b7; padding:4px 12px; border-radius:9999px; font-size:10px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; }
+.img-placeholder { background: linear-gradient(135deg, #161c22 0%, #1a2026 50%, #0a192f 100%);
+  display:flex; align-items:center; justify-content:center; color:#44474d; font-size:12px; }
+.nav-link { position:relative; }
+.nav-link::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px;
+  background:#00e0b7; transition:width 0.3s ease; }
+.nav-link:hover::after, .nav-link.active::after { width:100%; }
+.cost-bar { height:8px; border-radius:4px; background:#1a2026; overflow:hidden; }
+.cost-bar-fill { height:100%; border-radius:4px; transition:width 1s ease; }
+</style>
+</head>
+
+<body class="bg-background text-on-surface">
+
+<!-- ============================================ -->
+<!-- NAV -->
+<!-- ============================================ -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-8 py-4 bg-surface/60 backdrop-blur-2xl">
+  <a href="../index.html" class="text-lg font-black tracking-[0.2em] text-on-background uppercase font-headline hover:text-tertiary transition-colors">VOYAGER</a>
+  <div class="hidden md:flex gap-8 items-center text-sm">
+    <a class="nav-link text-on-surface-variant hover:text-on-surface transition-colors" href="../index.html">← 首頁</a>
+    <a class="nav-link text-on-surface-variant hover:text-on-surface transition-colors" href="#map-section">路線</a>
+    <a class="nav-link text-on-surface-variant hover:text-on-surface transition-colors" href="#itinerary">行程</a>
+    <a class="nav-link text-on-surface-variant hover:text-on-surface transition-colors" href="#info">實用資訊</a>
+    <a class="nav-link text-on-surface-variant hover:text-on-surface transition-colors" href="#expenses">費用</a>
+  </div>
+  <button id="mobile-menu-btn" class="md:hidden text-on-surface-variant">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="fixed inset-0 z-40 bg-surface/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 hidden">
+  <a class="text-2xl text-on-surface hover:text-tertiary transition-colors" href="../index.html" onclick="closeMobileMenu()">← 首頁</a>
+  <a class="text-2xl text-on-surface hover:text-tertiary transition-colors" href="#map-section" onclick="closeMobileMenu()">路線</a>
+  <a class="text-2xl text-on-surface hover:text-tertiary transition-colors" href="#itinerary" onclick="closeMobileMenu()">行程</a>
+  <a class="text-2xl text-on-surface hover:text-tertiary transition-colors" href="#info" onclick="closeMobileMenu()">實用資訊</a>
+  <a class="text-2xl text-on-surface hover:text-tertiary transition-colors" href="#expenses" onclick="closeMobileMenu()">費用</a>
+  <button class="mt-8 text-on-surface-variant" onclick="closeMobileMenu()">
+    <span class="material-symbols-outlined text-3xl">close</span>
+  </button>
+</div>
+
+<!-- ============================================ -->
+<!-- HERO -->
+<!-- ============================================ -->
+<header class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 tonal-carving overflow-hidden" id="hero">
+  <div class="aurora-glow"></div>
+
+  <!-- Background Image -->
+  <div class="absolute inset-0 z-0 opacity-30">
+    <img src="https://images.unsplash.com/photo-1520769669658-f07657f5a307?w=1920&q=80"
+         alt="Lofoten Islands Norway" class="w-full h-full object-cover"/>
+  </div>
+
+  <div class="z-10 max-w-5xl">
+    <p class="text-tertiary text-xs tracking-[0.3em] uppercase font-bold mb-6 fade-up">Feb 28 — Mar 15, 2025</p>
+    <h1 class="text-5xl md:text-8xl font-extrabold tracking-tighter text-on-background mb-4 leading-tight fade-up">
+      2025 挪威 &amp; 芬蘭<br/>
+      <span class="text-tertiary">冬季自駕之旅</span>
+    </h1>
+    <p class="text-base md:text-xl text-on-surface-variant font-light tracking-[0.15em] uppercase mb-12 fade-up">
+      Bergen → Fjords → Oslo → Lofoten → Tromsø → Rovaniemi → Helsinki
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left glass-panel p-8 rounded-xl fade-up">
+      <div>
+        <span class="text-tertiary text-[10px] tracking-widest uppercase font-bold block mb-2">Duration</span>
+        <p class="text-2xl font-headline font-bold">16 天</p>
+        <p class="text-on-surface-variant text-sm">跨越北極圈的冬季探險</p>
+      </div>
+      <div>
+        <span class="text-tertiary text-[10px] tracking-widest uppercase font-bold block mb-2">Crew</span>
+        <p class="text-2xl font-headline font-bold">Yost · Mimi · Justin · Yoyo</p>
+        <p class="text-on-surface-variant text-sm">4 位探險家的北歐之旅</p>
+      </div>
+      <div>
+        <span class="text-tertiary text-[10px] tracking-widest uppercase font-bold block mb-2">Route</span>
+        <p class="text-2xl font-headline font-bold">2,400+ km</p>
+        <p class="text-on-surface-variant text-sm">2 國 · 8 城市 · 5 天自駕</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-10 animate-bounce z-10">
+    <span class="material-symbols-outlined text-outline">expand_more</span>
+  </div>
+</header>
+
+<!-- ============================================ -->
+<!-- MAP -->
+<!-- ============================================ -->
+<section class="py-24 px-6 md:px-16 bg-surface-dim relative" id="map-section">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
+      <div class="max-w-2xl">
+        <h2 class="text-4xl md:text-6xl font-extrabold tracking-tighter text-on-surface mb-4 fade-up">The Frozen Path</h2>
+        <p class="text-on-surface-variant leading-relaxed fade-up">從峽灣深處到北極圈，穿越斯堪地那維亞的心臟地帶。點擊地圖上的標記查看每一站的故事。</p>
+      </div>
+      <div class="text-right flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-tertiary font-bold">
+          <span class="material-symbols-outlined text-sm">route</span><span>2,400+ KM</span>
+        </div>
+        <div class="flex items-center gap-2 text-primary font-bold">
+          <span class="material-symbols-outlined text-sm">location_city</span><span>8 Cities</span>
+        </div>
+      </div>
+    </div>
+    <div id="itinerary-map" class="rounded-xl border border-outline-variant/20 fade-up"></div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- ITINERARY -->
+<!-- ============================================ -->
+<section class="py-24 px-6 md:px-12 bg-surface" id="itinerary">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-4xl md:text-6xl font-extrabold tracking-tighter text-center mb-4 fade-up">每日行程</h2>
+    <p class="text-on-surface-variant text-center mb-20 fade-up">16 天北歐冬季探險全紀錄</p>
+
+    <div class="space-y-0">
+
+      <!-- ===== REGION: BERGEN & FJORDS ===== -->
+      <div class="mb-16 fade-up">
+        <div class="region-badge mb-8">
+          <span class="material-symbols-outlined text-sm">sailing</span> Bergen &amp; Fjords 卑爾根 &amp; 峽灣
+        </div>
+      </div>
+
+      <!-- Day 1 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-1">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">01</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">2/28 FRI</p>
+              <h4 class="text-xl md:text-2xl font-bold">啟程：台北 → 卑爾根 Bergen</h4>
+            </div>
+          </div>
+          <p class="text-on-surface-variant mb-6">TPE 7:55 出發，經轉機抵達挪威卑爾根 23:30。長途飛行日，抵達後直奔機場旁飯店休息。</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-surface-container p-3 rounded-lg">
+              <span class="material-symbols-outlined text-tertiary text-sm mb-1">flight</span>
+              <p class="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">交通</p>
+              <p class="text-xs">國際線長途飛行</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <span class="material-symbols-outlined text-tertiary text-sm mb-1">hotel</span>
+              <p class="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">住宿</p>
+              <p class="text-xs">Clarion Hotel Bergen Airport</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <span class="material-symbols-outlined text-tertiary text-sm mb-1">location_on</span>
+              <p class="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">地址</p>
+              <p class="text-xs">Flyplassveien 551, Ytrebygda</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <span class="material-symbols-outlined text-tertiary text-sm mb-1">info</span>
+              <p class="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">備註</p>
+              <p class="text-xs">無廚房</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 2 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-2">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">02</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/1 SAT</p>
+              <h4 class="text-xl md:text-2xl font-bold">卑爾根市區 Bergen City</h4>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-on-surface-variant mb-4">漫步世界遺產布呂根碼頭 Bryggen，登上佛洛伊恩山纜車 Fløyen 俯瞰峽灣港都全景。</p>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2 text-sm">
+                  <span class="material-symbols-outlined text-tertiary text-sm mt-0.5">visibility</span>
+                  <span>布呂根碼頭 Bryggen Wharf（世界遺產）</span>
+                </div>
+                <div class="flex items-start gap-2 text-sm">
+                  <span class="material-symbols-outlined text-tertiary text-sm mt-0.5">museum</span>
+                  <span>大學博物館 University Museum</span>
+                </div>
+                <div class="flex items-start gap-2 text-sm">
+                  <span class="material-symbols-outlined text-tertiary text-sm mt-0.5">gondola_lift</span>
+                  <span>佛洛伊恩山纜車 Fløyen Cable Car</span>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+                <p class="text-xs">早：飯店含早 / 午：鹿肉漢堡 Venison Burger</p>
+              </div>
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">住宿</p>
+                <p class="text-xs font-semibold">Scandic Ørnen</p>
+                <p class="text-[10px] text-on-surface-variant">Lars Hillesgate 18, 5008 Bergen</p>
+              </div>
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">購物推薦</p>
+                <p class="text-xs">Xhibition Center（戶外品牌5-7折）</p>
+                <p class="text-xs">Platous Sport AS（二樓折扣區）</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 3 - Norway in a Nutshell -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-3">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card glass-panel p-6 md:p-8 rounded-xl border border-tertiary/20">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">03</span>
+              <div>
+                <p class="text-tertiary font-bold text-xs tracking-wider">3/2 SUN</p>
+                <h4 class="text-xl md:text-2xl font-bold">挪威縮影 Norway in a Nutshell</h4>
+              </div>
+            </div>
+            <div class="region-badge">
+              <span class="material-symbols-outlined text-xs">star</span> 精華路線
+            </div>
+          </div>
+
+          <!-- Transport Chain -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary">train</span>
+              <p class="text-xs font-bold mt-1">8:08 → 9:17</p>
+              <p class="text-[10px] text-on-surface-variant">Bergen → Voss 火車</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary">directions_bus</span>
+              <p class="text-xs font-bold mt-1">10:10 → 11:25</p>
+              <p class="text-[10px] text-on-surface-variant">Voss → Gudvangen 巴士</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary">sailing</span>
+              <p class="text-xs font-bold mt-1">12:00 → 14:00</p>
+              <p class="text-[10px] text-on-surface-variant">Gudvangen → Flåm 峽灣渡輪</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary">train</span>
+              <p class="text-xs font-bold mt-1">14:30 → 14:33</p>
+              <p class="text-[10px] text-on-surface-variant">Flåm → Lunden 火車</p>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">景點</p>
+                <p class="text-xs">Stegastein 觀景台（視天氣決定）</p>
+                <p class="text-xs">Flåm Coop 超市採買晚餐及隔日食材</p>
+              </div>
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+                <p class="text-xs">早：飯店 / 晚：自炊 Cook</p>
+              </div>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">住宿</p>
+              <p class="text-xs font-semibold">Cheerful 4-bedroom home with fireplace</p>
+              <p class="text-[10px] text-on-surface-variant">15 Lunden, 5743（距 Flåm 中心 1.5km）</p>
+              <p class="text-[10px] text-on-surface-variant mt-1">✓ 有廚房 / 洗衣機</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REGION: OSLO ===== -->
+      <div class="mb-16 mt-8 fade-up">
+        <div class="region-badge mb-8">
+          <span class="material-symbols-outlined text-sm">location_city</span> Oslo 奧斯陸
+        </div>
+      </div>
+
+      <!-- Day 4 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-4">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">04</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/3 MON</p>
+              <h4 class="text-xl md:text-2xl font-bold">前往奧斯陸 To Oslo</h4>
+            </div>
+          </div>
+          <p class="text-on-surface-variant mb-4">從峽灣小鎮搭火車穿越挪威高原，傍晚抵達首都奧斯陸。</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary text-sm">train</span>
+              <p class="text-xs font-bold">11:48 → 12:28</p>
+              <p class="text-[10px] text-on-surface-variant">Lunden → Myrdal</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary text-sm">train</span>
+              <p class="text-xs font-bold">13:52 → 19:05</p>
+              <p class="text-[10px] text-on-surface-variant">Myrdal → Oslo 高鐵</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+              <p class="text-xs">早：三角飯糰+濃湯<br>午：烏茲別克菜</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">住宿</p>
+              <p class="text-xs font-semibold">BJØRVIKA APARTMENTS</p>
+              <p class="text-[10px] text-on-surface-variant">Teaterplassen</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 5 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-5">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">05</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/4 TUE</p>
+              <h4 class="text-xl md:text-2xl font-bold">奧斯陸市區 Oslo City</h4>
+            </div>
+          </div>
+          <p class="text-on-surface-variant mb-4">悠閒探索挪威首都，為明天的北極大移動儲備能量。</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">景點</p>
+              <p class="text-xs">奧斯陸市區探索</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+              <p class="text-xs">晚：德國豬腳外帶</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REGION: LOFOTEN ===== -->
+      <div class="mb-16 mt-8 fade-up">
+        <div class="region-badge mb-8">
+          <span class="material-symbols-outlined text-sm">landscape</span> Lofoten 羅佛敦群島
+        </div>
+      </div>
+
+      <!-- Day 6 - Big Move -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-6">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card glass-panel p-6 md:p-8 rounded-xl border border-tertiary/20">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">06</span>
+              <div>
+                <p class="text-tertiary font-bold text-xs tracking-wider">3/5 WED</p>
+                <h4 class="text-xl md:text-2xl font-bold">大移動日：Oslo → Lofoten</h4>
+              </div>
+            </div>
+            <div class="region-badge">
+              <span class="material-symbols-outlined text-xs">bolt</span> 大移動日
+            </div>
+          </div>
+
+          <!-- Transport Chain -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary">train</span>
+              <p class="text-xs font-bold mt-1">6:24 → 6:47</p>
+              <p class="text-[10px] text-on-surface-variant">Oslo Central → OSL 機場</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary">flight</span>
+              <p class="text-xs font-bold mt-1">8:30 → 10:00</p>
+              <p class="text-[10px] text-on-surface-variant">Oslo → Bodø 挪威航空 DY340</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary">directions_car</span>
+              <p class="text-xs font-bold mt-1">12:00 取車</p>
+              <p class="text-[10px] text-on-surface-variant">租車 5 天自駕開始</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary">directions_boat</span>
+              <p class="text-xs font-bold mt-1">15:15 → 18:30</p>
+              <p class="text-[10px] text-on-surface-variant">Bodø → Moskenes 渡輪</p>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+              <p class="text-xs">早：前日採買 / 午：外食 / 晚：自炊</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">住宿</p>
+              <p class="text-xs font-semibold">Å-Hamna Rorbuer 漁屋包棟</p>
+              <p class="text-[10px] text-on-surface-variant">Å I Lofoten, 8392 · 有廚房</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 7 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-7">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">07</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/6 THU</p>
+              <h4 class="text-xl md:text-2xl font-bold">奧鎮 Å → 雷訥 Reine</h4>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-on-surface-variant mb-4">探索全世界名字最短的小鎮「Å」，Hamnøy 橋空拍聖地，以及《孤獨星球》封面的經典黃色小屋。</p>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>奧鎮 Å — 全世界最短名字的鎮</div>
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>Hamnøy 橋（無人機空拍聖地）</div>
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>Hamnøy Scenic Viewpoint</div>
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>經典黃色房子（孤獨星球封面）</div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+                <p class="text-xs">全日自炊 Cook</p>
+              </div>
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">住宿</p>
+                <p class="text-xs font-semibold">Eliassen Rorbuer 漁屋包棟</p>
+                <p class="text-[10px] text-on-surface-variant">Hamnøy, 8390 Reine · 有廚房</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 8 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-8">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">08</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/7 FRI</p>
+              <h4 class="text-xl md:text-2xl font-bold">Reine → Nusfjord → Ballstad</h4>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-on-surface-variant mb-4">自駕穿梭羅佛敦漁村，Molobua 紅色漁屋排排站，挑戰 Offersøykammen 健行步道。</p>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>Molobua 水邊紅屋排排站</div>
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>Offersøykammen 徒步健行</div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+                <p class="text-xs">早：民宿 / 午晚：自炊</p>
+              </div>
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">住宿</p>
+                <p class="text-xs font-semibold">Kræmmervika Rorbuer 漁屋包棟</p>
+                <p class="text-[10px] text-on-surface-variant">178 Ballstadlandet, 8373 Ballstad</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 9 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-9">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">09</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/8 SAT</p>
+              <h4 class="text-xl md:text-2xl font-bold">Ballstad → Henningsvær → 勒丁恩 Leknes</h4>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-on-surface-variant mb-4">拜訪世界最美足球場 Henningsvær，打卡網紅小教堂 Sildpollnes kirke。晚上回包棟享受 spa 放鬆。</p>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>Henningsvær 足球場（世界最美球場）</div>
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>Sildpollnes kirke 網紅打卡小教堂</div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">路程</p>
+                <p class="text-xs">Ballstad → 1.5hr → Henningsvær → 2hr → Leknes</p>
+              </div>
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">住宿</p>
+                <p class="text-xs font-semibold">The Perfect Stop - Pinewood Loft</p>
+                <p class="text-[10px] text-on-surface-variant">Rådhusvegen 18, 8410 · 包棟+spa</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 10 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-10">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">10</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/9 SUN</p>
+              <h4 class="text-xl md:text-2xl font-bold">勒丁恩 → Polar Park → Andselv</h4>
+            </div>
+          </div>
+          <p class="text-on-surface-variant mb-4">驅車前往北極野生動物園，近距離接觸北極熊、狼、麋鹿等極地動物。</p>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">路程</p>
+              <p class="text-xs">Leknes → 2.5hr → Polar Park → 1hr → Andselv</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">景點</p>
+              <p class="text-xs">北極動物園 Polar Zoo</p>
+              <p class="text-[10px] text-error">⚠ 15:30 關門</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">住宿</p>
+              <p class="text-xs font-semibold">Høgtun kulturklynge</p>
+              <p class="text-[10px] text-on-surface-variant">69 Høgtunveien, 9321 Olsborg</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REGION: TROMSØ ===== -->
+      <div class="mb-16 mt-8 fade-up">
+        <div class="region-badge mb-8">
+          <span class="material-symbols-outlined text-sm">ac_unit</span> Tromsø 特羅姆瑟
+        </div>
+      </div>
+
+      <!-- Day 11 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-11">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">11</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/10 MON</p>
+              <h4 class="text-xl md:text-2xl font-bold">Andselv → 特羅姆瑟 Tromsø</h4>
+            </div>
+          </div>
+          <p class="text-on-surface-variant mb-4">上午開車到特羅姆瑟，12:00 還車。下午機場附近 Jobb og Fritid AS 購物，傍晚搭纜車看極光。</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">重要提醒</p>
+              <p class="text-xs">12:00 還車 → 先放行李 → 再去還車</p>
+              <p class="text-xs mt-1">購物：Jobb og Fritid AS（機場附近）</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">住宿（兩晚）</p>
+              <p class="text-xs font-semibold">FIVE Apartments - Boutique</p>
+              <p class="text-[10px] text-on-surface-variant">22 Anton Jakobsens veg, 9020 Tromsø</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 12 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-12">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">12</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/11 TUE</p>
+              <h4 class="text-xl md:text-2xl font-bold">特羅姆瑟市區 Tromsø City</h4>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-on-surface-variant mb-4">北極圈內最大城市一日遊。參觀北極教堂、北極博物館，再搭纜車登高遠眺。</p>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>北極教堂 Arctic Cathedral</div>
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>北極博物館 Arctic Museum</div>
+                <div class="flex items-start gap-2 text-sm"><span class="text-tertiary">●</span>Fjellheisen 纜車觀景</div>
+              </div>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+              <p class="text-xs">晚：自炊 Cook</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REGION: FINLAND ===== -->
+      <div class="mb-16 mt-8 fade-up">
+        <div class="region-badge mb-8">
+          <span class="material-symbols-outlined text-sm">forest</span> Finland 芬蘭
+        </div>
+      </div>
+
+      <!-- Day 13 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-13">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card glass-panel p-6 md:p-8 rounded-xl border border-tertiary/20">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">13</span>
+              <div>
+                <p class="text-tertiary font-bold text-xs tracking-wider">3/12 WED</p>
+                <h4 class="text-xl md:text-2xl font-bold">特羅姆瑟 → 羅瓦涅米 Rovaniemi</h4>
+              </div>
+            </div>
+            <div class="region-badge">
+              <span class="material-symbols-outlined text-xs">flight</span> 跨國移動
+            </div>
+          </div>
+          <p class="text-on-surface-variant mb-4">飛越國境進入芬蘭拉普蘭。下午拜訪聖誕老人村，跨越北極圈線！</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-surface-container p-3 rounded-lg text-center">
+              <span class="material-symbols-outlined text-tertiary">flight</span>
+              <p class="text-xs font-bold mt-1">9:35 → 12:00</p>
+              <p class="text-[10px] text-on-surface-variant">芬蘭航空 AY0542</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">景點</p>
+              <p class="text-xs">聖誕老人村 Santa Claus Village</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+              <p class="text-xs">早：飛機餐 / 晚：烤鮭魚餐廳</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">住宿</p>
+              <p class="text-xs font-semibold">Nordic Quality Apartments</p>
+              <p class="text-[10px] text-on-surface-variant">15 Pohjolankatu A57, 96100</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 14 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-14">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card glass-panel p-6 md:p-8 rounded-xl border border-tertiary/20">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">14</span>
+              <div>
+                <p class="text-tertiary font-bold text-xs tracking-wider">3/13 THU</p>
+                <h4 class="text-xl md:text-2xl font-bold">哈士奇雪橇 → 夜臥火車 Husky &amp; Night Train</h4>
+              </div>
+            </div>
+            <div class="region-badge">
+              <span class="material-symbols-outlined text-xs">star</span> 必玩體驗
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-on-surface-variant mb-4">上午哈士奇雪橇馳騁雪原，下午享用超值 buffet，傍晚搭臥鋪夜車前往赫爾辛基。</p>
+              <div class="space-y-3">
+                <div class="bg-surface-container p-3 rounded-lg">
+                  <p class="text-[10px] text-tertiary font-bold uppercase">哈士奇雪橇 11:00</p>
+                  <p class="text-xs font-semibold">Arctic Circle Husky Park</p>
+                  <p class="text-[10px] text-on-surface-variant">集合：Joulumaantie 3, Rovaniemi 96930</p>
+                  <p class="text-[10px] text-on-surface-variant">5km 路線 · 可另付 15 歐跟哈士奇玩</p>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="bg-surface-container p-3 rounded-lg">
+                <p class="text-[10px] text-tertiary font-bold uppercase">餐食</p>
+                <p class="text-xs">午：Ravintola Feenix Rinteenkulma</p>
+                <p class="text-[10px] text-on-surface-variant">午餐 buffet 15 歐 · 超值！</p>
+              </div>
+              <div class="bg-surface-container p-3 rounded-lg text-center">
+                <span class="material-symbols-outlined text-tertiary">train</span>
+                <p class="text-xs font-bold mt-1">17:52 → 隔日 6:27</p>
+                <p class="text-[10px] text-on-surface-variant">Rovaniemi → Helsinki 臥鋪夜車</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REGION: HOMEWARD ===== -->
+      <div class="mb-16 mt-8 fade-up">
+        <div class="region-badge mb-8">
+          <span class="material-symbols-outlined text-sm">home</span> Homeward 歸途
+        </div>
+      </div>
+
+      <!-- Day 15 -->
+      <div class="relative pl-8 md:pl-12 pb-16 fade-up" id="day-15">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">15</span>
+            <div>
+              <p class="text-tertiary font-bold text-xs tracking-wider">3/14 FRI</p>
+              <h4 class="text-xl md:text-2xl font-bold">赫爾辛基 Helsinki → 回家</h4>
+            </div>
+          </div>
+          <p class="text-on-surface-variant mb-4">清晨 6:27 抵達赫爾辛基，半日市區探索後，19:30 搭機返回台灣。</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">行程</p>
+              <p class="text-xs">赫爾辛基市區半日遊</p>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg">
+              <p class="text-[10px] text-tertiary font-bold uppercase">回程</p>
+              <p class="text-xs">19:30 搭機返台</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 16 -->
+      <div class="relative pl-8 md:pl-12 pb-8 fade-up" id="day-16">
+        <div class="absolute left-0 md:left-3 top-1">
+          <div class="timeline-dot" style="background:#b9c7e4; box-shadow:0 0 12px rgba(185,199,228,0.4);"></div>
+        </div>
+        <div class="day-card bg-surface-container-lowest p-6 md:p-8 rounded-xl">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="text-5xl font-extrabold text-outline-variant/30 font-headline">16</span>
+            <div>
+              <p class="text-primary font-bold text-xs tracking-wider">3/15 SAT</p>
+              <h4 class="text-xl md:text-2xl font-bold">抵達桃園 Home Sweet Home</h4>
+            </div>
+          </div>
+          <p class="text-on-surface-variant">TPE 22:10 抵達桃園國際機場。16 天的北極探險，圓滿結束。</p>
+        </div>
+      </div>
+
+    </div><!-- end timeline -->
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- PRACTICAL INFO -->
+<!-- ============================================ -->
+<section class="py-24 px-6 md:px-16 bg-surface-container-lowest" id="info">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-4xl md:text-6xl font-extrabold tracking-tighter text-center mb-4 fade-up">Survivor's Manual</h2>
+    <p class="text-on-surface-variant text-center mb-16 fade-up">北歐生存指南</p>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Supermarket Guide -->
+      <div class="glass-panel p-8 rounded-xl fade-up day-card">
+        <div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-tertiary">shopping_cart</span>
+        </div>
+        <h3 class="text-xl font-bold mb-4">超市紅黑榜</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 bg-surface-container rounded-lg">
+            <span class="font-bold text-sm">REMA 1000</span>
+            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded">平價之王</span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-surface-container rounded-lg">
+            <span class="font-bold text-sm">KIWI</span>
+            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded">折扣狠</span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-surface-container rounded-lg">
+            <span class="font-bold text-sm">MENY</span>
+            <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded">品質優選</span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-surface-container rounded-lg opacity-50">
+            <span class="font-bold text-sm">Joker / Bunnpris</span>
+            <span class="text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded">避雷</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transport Info -->
+      <div class="glass-panel p-8 rounded-xl fade-up day-card">
+        <div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-tertiary">commute</span>
+        </div>
+        <h3 class="text-xl font-bold mb-4">各城市交通</h3>
+        <div class="space-y-3 text-sm">
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">卑爾根 機場→市中心</p>
+            <p>輕軌 45min · 39 NOK</p>
+          </div>
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">奧斯陸 Central→機場</p>
+            <p>國鐵 27min · 114 NOK</p>
+          </div>
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">特羅姆瑟 機場→市區</p>
+            <p>公車 42/40 號 · 44 NOK · 90min 免費轉乘</p>
+          </div>
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">羅瓦涅米 機場→聖誕村</p>
+            <p>公車 8 號 · 4 歐 · 車上刷卡</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Packing -->
+      <div class="glass-panel p-8 rounded-xl fade-up day-card">
+        <div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-tertiary">luggage</span>
+        </div>
+        <h3 class="text-xl font-bold mb-4">行李清單</h3>
+        <div class="grid grid-cols-2 gap-3 text-sm text-on-surface-variant">
+          <div class="space-y-2">
+            <p class="text-tertiary text-[10px] font-bold uppercase mb-1">衣物</p>
+            <p>防水外套+褲子</p>
+            <p>發熱衣·毛襪</p>
+            <p>手套·圍巾·毛帽</p>
+            <p>泳衣（spa 用）</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-tertiary text-[10px] font-bold uppercase mb-1">裝備</p>
+            <p>爐頭·悶燒罐</p>
+            <p>調味料·泡麵</p>
+            <p>電源轉接頭</p>
+            <p>28 吋行李箱 x4</p>
+          </div>
+        </div>
+        <div class="mt-4 p-3 bg-surface-container rounded-lg text-xs text-on-surface-variant">
+          <p class="text-tertiary text-[10px] font-bold uppercase mb-1">航空行李規定</p>
+          <p>座位下：30x20x38cm / 登機箱：55x23x40cm / 托運：23kg</p>
+        </div>
+      </div>
+
+      <!-- Shopping Spots -->
+      <div class="glass-panel p-8 rounded-xl fade-up day-card">
+        <div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-tertiary">storefront</span>
+        </div>
+        <h3 class="text-xl font-bold mb-4">購物推薦</h3>
+        <div class="space-y-3 text-sm">
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">卑爾根 Bergen</p>
+            <p>Xhibition Center（始祖鳥/Patagonia/TNF 5-7折）</p>
+            <p>Platous Sport AS（二樓折扣老人頭+始祖鳥）</p>
+          </div>
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">特羅姆瑟 Tromsø</p>
+            <p>Jobb og Fritid AS（機場附近）</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Restaurant Guide -->
+      <div class="glass-panel p-8 rounded-xl fade-up day-card">
+        <div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-tertiary">restaurant</span>
+        </div>
+        <h3 class="text-xl font-bold mb-4">餐廳推薦</h3>
+        <div class="space-y-3 text-sm">
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">奧斯陸 Oslo</p>
+            <p>烏茲別克菜 · 德國豬腳外帶</p>
+          </div>
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">卑爾根 Bergen</p>
+            <p>鹿肉熱狗 Venison Hotdog</p>
+          </div>
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">羅瓦涅米 Rovaniemi</p>
+            <p>Ravintola Feenix（午餐 buffet 15 歐）</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rental Car -->
+      <div class="glass-panel p-8 rounded-xl fade-up day-card">
+        <div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-tertiary">directions_car</span>
+        </div>
+        <h3 class="text-xl font-bold mb-4">租車資訊</h3>
+        <div class="space-y-3 text-sm">
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">租車期間</p>
+            <p>3/5 (三) ~ 3/10 (一)，共 5 天</p>
+          </div>
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">取還地點</p>
+            <p>取：Bodø 機場 12:00<br>還：Tromsø 12:00</p>
+          </div>
+          <div class="p-3 bg-surface-container rounded-lg">
+            <p class="text-tertiary text-[10px] font-bold uppercase">攜帶證件</p>
+            <p>國內駕照 + 國際駕照</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- EXPENSES -->
+<!-- ============================================ -->
+<section class="py-24 px-6 md:px-16 bg-surface-dim" id="expenses">
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-4xl md:text-6xl font-extrabold tracking-tighter text-center mb-4 fade-up">費用總覽</h2>
+    <p class="text-on-surface-variant text-center mb-6 fade-up">每人預估費用</p>
+    <p class="text-5xl md:text-7xl font-headline font-extrabold text-tertiary text-center mb-16 fade-up">
+      NT$ 122,361
+    </p>
+
+    <div class="space-y-4 fade-up">
+      <!-- Cost Items -->
+      <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-tertiary text-sm">flight</span>
+          <span>來回機票</span>
+        </div>
+        <div class="text-right">
+          <span class="font-bold">NT$ 34,606</span>
+          <div class="cost-bar w-32 mt-1"><div class="cost-bar-fill bg-tertiary" style="width:100%"></div></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-tertiary text-sm">hotel</span>
+          <span>住宿 10 晚</span>
+        </div>
+        <div class="text-right">
+          <span class="font-bold">NT$ 22,341</span>
+          <div class="cost-bar w-32 mt-1"><div class="cost-bar-fill bg-primary" style="width:65%"></div></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-tertiary text-sm">directions_car</span>
+          <span>租車 5 天</span>
+        </div>
+        <div class="text-right">
+          <span class="font-bold">NT$ 15,334</span>
+          <div class="cost-bar w-32 mt-1"><div class="cost-bar-fill bg-primary" style="width:44%"></div></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-tertiary text-sm">restaurant</span>
+          <span>餐食</span>
+        </div>
+        <div class="text-right">
+          <span class="font-bold">NT$ 12,400</span>
+          <div class="cost-bar w-32 mt-1"><div class="cost-bar-fill bg-secondary" style="width:36%"></div></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-tertiary text-sm">flight_takeoff</span>
+          <span>內陸機票（Tromsø→Rovaniemi）</span>
+        </div>
+        <div class="text-right">
+          <span class="font-bold">NT$ 9,931</span>
+          <div class="cost-bar w-32 mt-1"><div class="cost-bar-fill bg-secondary" style="width:29%"></div></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-tertiary text-sm">train</span>
+          <span>挪威縮影交通</span>
+        </div>
+        <div class="text-right">
+          <span class="font-bold">NT$ 6,229</span>
+          <div class="cost-bar w-32 mt-1"><div class="cost-bar-fill bg-outline" style="width:18%"></div></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-tertiary text-sm">confirmation_number</span>
+          <span>門票 / 纜車</span>
+        </div>
+        <div class="text-right">
+          <span class="font-bold">NT$ 4,383</span>
+          <div class="cost-bar w-32 mt-1"><div class="cost-bar-fill bg-outline" style="width:13%"></div></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-tertiary text-sm">pets</span>
+          <span>哈士奇雪橇</span>
+        </div>
+        <div class="text-right">
+          <span class="font-bold">NT$ 3,409</span>
+          <div class="cost-bar w-32 mt-1"><div class="cost-bar-fill bg-outline" style="width:10%"></div></div>
+        </div>
+      </div>
+
+      <!-- Other costs row -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8">
+        <div class="bg-surface-container-lowest p-4 rounded-xl text-center">
+          <p class="text-[10px] text-on-surface-variant uppercase font-bold">內陸機票 Oslo-Bodø</p>
+          <p class="font-bold">NT$ 3,598</p>
+        </div>
+        <div class="bg-surface-container-lowest p-4 rounded-xl text-center">
+          <p class="text-[10px] text-on-surface-variant uppercase font-bold">臥鋪夜車</p>
+          <p class="font-bold">NT$ 3,822</p>
+        </div>
+        <div class="bg-surface-container-lowest p-4 rounded-xl text-center">
+          <p class="text-[10px] text-on-surface-variant uppercase font-bold">旅遊平安險</p>
+          <p class="font-bold">NT$ 2,200</p>
+        </div>
+        <div class="bg-surface-container-lowest p-4 rounded-xl text-center">
+          <p class="text-[10px] text-on-surface-variant uppercase font-bold">eSIM + 油資 + 其他</p>
+          <p class="font-bold">NT$ 4,108</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- FOOTER -->
+<!-- ============================================ -->
+<footer class="py-12 px-8 bg-surface-container-lowest text-center">
+  <p class="text-on-surface-variant text-sm mb-2">
+    Made with <span class="text-tertiary">&#10052;</span> from Taiwan to the Arctic
+  </p>
+  <p class="text-outline text-xs">
+    2025 Arctic Vistas · Yost · Mimi · Justin · Yoyo
+  </p>
+</footer>
+
+<!-- ============================================ -->
+<!-- SCRIPTS -->
+<!-- ============================================ -->
+<script>
+// Mobile Menu
+const mobileBtn = document.getElementById('mobile-menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+function closeMobileMenu() { mobileMenu.classList.add('hidden'); }
+
+// Smooth Scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth' });
+    closeMobileMenu();
+  });
+});
+
+// Intersection Observer for fade-up animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Leaflet Map
+const map = L.map('itinerary-map', {
+  scrollWheelZoom: false,
+  attributionControl: false
+}).setView([65.5, 15.0], 4);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OSM &copy; CARTO'
+}).addTo(map);
+
+const stops = [
+  { name: "Bergen 卑爾根", coords: [60.3913, 5.3221], day: "Day 1-2", icon: "🏔" },
+  { name: "Flåm / Lunden", coords: [60.8608, 7.1118], day: "Day 3", icon: "⛴" },
+  { name: "Oslo 奧斯陸", coords: [59.9139, 10.7522], day: "Day 4-5", icon: "🏛" },
+  { name: "Bodø 博多", coords: [67.2804, 14.4049], day: "Day 6", icon: "✈️" },
+  { name: "Å / Reine 奧鎮/雷訥", coords: [67.9334, 13.0891], day: "Day 6-7", icon: "🏠" },
+  { name: "Ballstad", coords: [68.0756, 13.5446], day: "Day 8", icon: "🐟" },
+  { name: "Henningsvær", coords: [68.1520, 14.2009], day: "Day 9", icon: "⚽" },
+  { name: "Leknes 勒丁恩", coords: [68.1465, 13.6103], day: "Day 9", icon: "♨️" },
+  { name: "Polar Park", coords: [68.6976, 18.0700], day: "Day 10", icon: "🐻‍❄️" },
+  { name: "Tromsø 特羅姆瑟", coords: [69.6492, 18.9553], day: "Day 11-12", icon: "🌌" },
+  { name: "Rovaniemi 羅瓦涅米", coords: [66.5039, 25.7282], day: "Day 13-14", icon: "🎅" },
+  { name: "Helsinki 赫爾辛基", coords: [60.1699, 24.9384], day: "Day 15", icon: "🏰" }
+];
+
+// Draw route polyline
+const routeCoords = stops.map(s => s.coords);
+L.polyline(routeCoords, {
+  color: '#00E0B7', weight: 2, opacity: 0.5, dashArray: '8, 8'
+}).addTo(map);
+
+// Custom circle markers with popups
+stops.forEach((s, i) => {
+  const isKey = [0, 2, 4, 9, 10, 11].includes(i);
+  L.circleMarker(s.coords, {
+    radius: isKey ? 8 : 5,
+    fillColor: '#00E0B7',
+    color: '#0e141a',
+    weight: 2,
+    opacity: 1,
+    fillOpacity: isKey ? 1 : 0.6
+  }).addTo(map).bindPopup(
+    `<div style="font-family:Inter,sans-serif;font-size:13px;min-width:120px;">
+      <strong>${s.icon} ${s.name}</strong><br>
+      <span style="color:#888;">${s.day}</span>
+    </div>`,
+    { className: 'dark-popup' }
+  );
+});
+
+// Custom popup style
+const style = document.createElement('style');
+style.textContent = `.dark-popup .leaflet-popup-content-wrapper{background:#1a2026;color:#dde3eb;border-radius:8px;border:1px solid #2f353c;box-shadow:0 0 20px rgba(0,224,183,0.1);} .dark-popup .leaflet-popup-tip{background:#1a2026;}`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>
