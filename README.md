@@ -2,9 +2,6 @@
 
 A dark-themed, editorial-style travel journal built as a static site. Documenting our journeys with photography, food, and stories from around the world.
 
-## About
-
-We are a couple who love travel, photography, and food. This site serves as our digital travel magazine — recording every trip with a cinematic, immersive experience. Currently on the path to **F.I.R.E.**
 
 ## Site Structure
 
